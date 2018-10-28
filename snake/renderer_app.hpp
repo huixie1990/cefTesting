@@ -35,11 +35,12 @@ public:
                                   CefProcessId source_process,
                                   CefRefPtr<CefProcessMessage> message) override;
     
-    int getPos() const {return pos;};
+    CefRefPtr<CefV8Value> getPos() const {return fSnakePoints;};
     
 private:
     // Handles the renderer side of query routing.
     CefRefPtr<CefMessageRouterRendererSide> fMessageRouter;
+    CefRefPtr<CefV8Value> fSnakePoints;
     IMPLEMENT_REFCOUNTING(RendererApp);
-    int pos=0;
+    
 };

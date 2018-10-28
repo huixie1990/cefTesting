@@ -28,7 +28,7 @@ namespace snake {
         
     private:
         std::chrono::duration<double> fSampleTime;
-        Snake fSnake = Snake({{1,1}},2.5);
+        Snake fSnake = Snake({{1,1}},1.5);
     };
     
 }

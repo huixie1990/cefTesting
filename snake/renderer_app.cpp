@@ -45,11 +45,25 @@ bool RendererApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
                                            CefProcessId source_process,
                                            CefRefPtr<CefProcessMessage> message) {
     
+    auto context = browser->GetMainFrame()->GetV8Context();
+    context->Enter();
     const std::string& message_name = message->GetName();
     if (message_name == "my_message") {
         // Handle the message here...
+
         auto args = message->GetArgumentList();
-        pos = args->GetInt(0);
+        
+        auto points = CefV8Value::CreateArray(args->GetSize());
+        for(unsigned i=0;i<args->GetSize();i++){
+            auto point = args->GetDictionary(i);
+            auto jsonPoint = CefV8Value::CreateObject(nullptr, nullptr);
+            jsonPoint->SetValue("x",CefV8Value::CreateInt(point->GetInt("x")), V8_PROPERTY_ATTRIBUTE_READONLY);
+            jsonPoint->SetValue("y",CefV8Value::CreateInt(point->GetInt("y")), V8_PROPERTY_ATTRIBUTE_READONLY);
+            points->SetValue(i, jsonPoint);
+        }
+        fSnakePoints = points;
+     //   pos = args->GetInt(0);
+        context->Exit();
         return true;
     }
     

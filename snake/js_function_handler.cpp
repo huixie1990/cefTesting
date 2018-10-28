@@ -15,7 +15,8 @@ bool snake::JsSnakeLocationHandler::Execute(const CefString& name,
     if (name == snake::getJsSnakePosFuncName()) {
 
         // Return my string value.
-        retval = CefV8Value::CreateInt(fApp->getPos());
+        retval = fApp->getPos();
+       // retval = CefV8Value::CreateInt(10);
         return true;
     }
     

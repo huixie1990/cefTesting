@@ -8,8 +8,17 @@ function lol(){
     let context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillStyle = "#000000";
-    context.fillRect(window.getPositionForSnake(), 20, 100, 100);
+    
+    var points = window.getPositionForSnake();
+ 
+    let scale = 10;
+  //  alert(points[0].y);
+    context.fillRect(scale*points[0].x, scale*points[0].y, scale, scale);
 
+}
+
+function call(){
+    setInterval(lol, 50);
 }
 
 // Send a query to the browser process.
@@ -31,12 +40,12 @@ function sendMessage() {
 
 <form>
 Message: <input type="text" id="message" value="My Message">
-<br/><input type="button" onclick="lol();" value="Send Message">
+<br/><input type="button" onclick="call();" value="Send Message">
 <br/>You should see the reverse of your message below:
 <br/><textarea rows="10" cols="40" id="result"></textarea>
 </form>
 
-<canvas id="myCanvas" width="300" height="150" style="border:1px solid #d3d3d3;">
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
 
 </body>
 </html>
