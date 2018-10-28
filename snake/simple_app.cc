@@ -58,7 +58,7 @@ void SimpleApp::OnContextInitialized() {
 }
 
 
-void SimpleApp::notify(const snake::GameEngine& engine){
+void SimpleApp::notify(const snake::Snake& snake){
     auto browsers = getClient()->getBrowsers();
     if(browsers.empty()){
         return;
@@ -71,8 +71,33 @@ void SimpleApp::notify(const snake::GameEngine& engine){
     CefRefPtr<CefListValue> args = msg->GetArgumentList();
     
     // Populate the argument values.
-   // args->SetString(0, "my string");
-    args->SetInt(0, engine.getPos());
+    const auto snakePosition = snake.getPosition();
+    args->SetSize(snakePosition.size());
+    
+    for(unsigned i=0; i<snakePosition.size(); i++){
+        CefRefPtr<CefDictionaryValue> point = CefDictionaryValue::Create();
+        point->SetInt("x", snakePosition[i].x);
+        point->SetInt("y", snakePosition[i].y);
+        args->SetDictionary(i, point);
+    }
+    
+   
+    
+    
+//    auto pointArray = CefV8Value::CreateArray(snakePosition.size());
+//
+//    for (unsigned i=0; i<snakePosition.size(); i++){
+//        auto point = CefV8Value::CreateObject(nullptr, nullptr);
+//        point->SetValue("x", CefV8Value::CreateInt(snakePosition[i].x),
+//                        V8_PROPERTY_ATTRIBUTE_READONLY);
+//        point->SetValue("y", CefV8Value::CreateInt(snakePosition[i].y),
+//                       V8_PROPERTY_ATTRIBUTE_READONLY);
+//        pointArray->SetValue(i, point);
+//    }
+   // CefRefPtr<CefV8Value> obj = CefV8Value::CreateObject(NULL,NULL);
+   // CefV8Value::CreateObject(nullptr, nullptr);
+
+   // args->SetValue(0, static_cast<CefRefPtr<CefValue>>(obj));
     
     // Send the process message to the render process.
     // Use PID_BROWSER instead when sending a message to the browser process.

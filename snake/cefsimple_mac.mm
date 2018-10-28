@@ -132,7 +132,8 @@
         // Create a CefApp for the browser process. Other processes are handled by
         // process_helper_mac.cc.
         CefRefPtr<SimpleApp> app = new SimpleApp();
-        engine.setApp(app);
+        
+        engine.getSnake().addListner(app);
         // Initialize the SnakeApplication instance.
         [SnakeApplication sharedApplication];
 

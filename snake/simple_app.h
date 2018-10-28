@@ -7,9 +7,10 @@
 
 #include "include/cef_app.h"
 #include "snake_client.h"
-#include "game_engine.hpp"
+#include "snake.hpp"
+#include "listner.hpp"
 // Implement application-level callbacks for the browser process.
-class SimpleApp : public CefApp, public CefBrowserProcessHandler, public  snake::GameEngineListner{
+class SimpleApp : public CefApp, public CefBrowserProcessHandler, public  Listner<snake::Snake>{
  public:
   SimpleApp();
 
@@ -24,7 +25,7 @@ class SimpleApp : public CefApp, public CefBrowserProcessHandler, public  snake:
 
     
     CefRefPtr<SnakeClient> getClient() const {return fClient;};
-    virtual void notify(const snake::GameEngine&) override;
+    virtual void notify(const snake::Snake&) override;
  private:
     CefRefPtr<SnakeClient> fClient;
   // Include the default reference counting implementation.

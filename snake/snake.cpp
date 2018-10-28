@@ -11,17 +11,24 @@
 #include <iostream>
 using namespace snake;
 
-void Snake::step(std::chrono::duration<double> timeStep){
+void Snake::timeStep(std::chrono::duration<double> timeStep){
     double oldDistance = fCurrentMovingDistance;
     fCurrentMovingDistance += timeStep.count() * fSpeed;
     
-    if(std::floor(fCurrentMovingDistance) > std::floor(oldDistance)){
-        move();
+    if(int steps = std::floor(fCurrentMovingDistance) - std::floor(oldDistance)){
+        move(steps);
     }
 }
 
+void Snake::move(int steps){
+    for(int i=0;i<steps;i++){
+        moveOneStep();
+    }
+    notifyListners();
+  //  std::cout << "x: " << fBodyPoints.at(0).x << " . y: " << fBodyPoints.at(0).y <<std::endl;
+}
 
-void Snake::move(){
+void Snake::moveOneStep(){
     snake::Point nextPoint = [this](){
         auto currentPoint = fBodyPoints.back();
         switch (fDirection) {
@@ -42,5 +49,15 @@ void Snake::move(){
     fBodyPoints.push_back(std::move(nextPoint));
     fBodyPoints.erase(fBodyPoints.begin());
     
-    std::cout << "x: " << fBodyPoints.at(0).x << " . y: " << fBodyPoints.at(0).y <<std::endl;
+    
+}
+
+void Snake::addListner(Listner<Snake>* listener){
+    fListners.push_back(listener);
+}
+
+void Snake::notifyListners(){
+    for(const auto& listner: fListners){
+        listner->notify(*this);
+    }
 }

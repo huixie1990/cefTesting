@@ -7,6 +7,7 @@
 
 #pragma once
 #include "point.hpp"
+#include "listner.hpp"
 #include <vector>
 #include <chrono>
 
@@ -21,11 +22,13 @@ namespace snake {
         Snake(const std::vector<Point>& bodyPoints, double speed, Direction direction):
             fBodyPoints(bodyPoints), fSpeed(speed), fDirection(direction){};
         
-        
-        void step(std::chrono::duration<double>); //calculate tiny little movement for every time step
-        void move(); //move the position if accumulated steps are big enough for a move
-        void setSpeed(double);
-        
+        const std::vector<Point>& getPosition() const{
+            return fBodyPoints;
+        }
+        void timeStep(std::chrono::duration<double>);
+        void move(int steps);
+        void setSpeed(double speed);
+        void addListner(Listner<Snake>*);
         
         // compiler generated essential operations
         // do we really need to be expliticit?
@@ -40,6 +43,11 @@ namespace snake {
         double fSpeed;
         Direction fDirection;
         double fCurrentMovingDistance = 0;
+        std::vector<Listner<Snake>*> fListners;
+        
+        
+        void notifyListners();
+        void moveOneStep();
         bool isBodyValid(const std::vector<Point>&);
     };
 }
