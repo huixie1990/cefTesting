@@ -3,11 +3,20 @@
 <title>Message Router Example</title>
 <script language="JavaScript">
 
+function lol(){
+    let canvas = document.getElementById("myCanvas");
+    let context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "#000000";
+    context.fillRect(window.getPositionForSnake(), 20, 100, 100);
+
+}
+
 // Send a query to the browser process.
 function sendMessage() {
   // Results in a call to the OnQuery method in client_impl.cc.
   window.cefQuery({
-    request: 'MessageRouterTest:' + document.getElementById("message").value,
+    request: 'getSnakePosition:' + document.getElementById("message").value,
     onSuccess: function(response) {
       document.getElementById('result').value = 'Response: '+response;
     },
@@ -18,11 +27,16 @@ function sendMessage() {
 
 </head>
 <body bgcolor="white">
+
+
 <form>
 Message: <input type="text" id="message" value="My Message">
-<br/><input type="button" onclick="sendMessage();" value="Send Message">
+<br/><input type="button" onclick="lol();" value="Send Message">
 <br/>You should see the reverse of your message below:
 <br/><textarea rows="10" cols="40" id="result"></textarea>
 </form>
+
+<canvas id="myCanvas" width="300" height="150" style="border:1px solid #d3d3d3;">
+
 </body>
 </html>

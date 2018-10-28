@@ -17,6 +17,7 @@ public:
     RendererApp& operator=(RendererApp) = delete;
     RendererApp& operator=(RendererApp&&) = default;
     ~RendererApp() = default;
+    
     CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() override;
     
     // CefRenderProcessHandler methods:
@@ -34,9 +35,11 @@ public:
                                   CefProcessId source_process,
                                   CefRefPtr<CefProcessMessage> message) override;
     
+    int getPos() const {return pos;};
     
 private:
     // Handles the renderer side of query routing.
     CefRefPtr<CefMessageRouterRendererSide> fMessageRouter;
     IMPLEMENT_REFCOUNTING(RendererApp);
+    int pos=0;
 };

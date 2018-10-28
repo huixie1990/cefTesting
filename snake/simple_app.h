@@ -6,9 +6,10 @@
 #define CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_
 
 #include "include/cef_app.h"
-
+#include "snake_client.h"
+#include "game_engine.hpp"
 // Implement application-level callbacks for the browser process.
-class SimpleApp : public CefApp, public CefBrowserProcessHandler {
+class SimpleApp : public CefApp, public CefBrowserProcessHandler, public  snake::GameEngineListner{
  public:
   SimpleApp();
 
@@ -21,7 +22,11 @@ class SimpleApp : public CefApp, public CefBrowserProcessHandler {
   // CefBrowserProcessHandler methods:
   virtual void OnContextInitialized() OVERRIDE;
 
+    
+    CefRefPtr<SnakeClient> getClient() const {return fClient;};
+    virtual void notify(const snake::GameEngine&) override;
  private:
+    CefRefPtr<SnakeClient> fClient;
   // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(SimpleApp);
 };

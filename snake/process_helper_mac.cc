@@ -3,11 +3,13 @@
 // be found in the LICENSE file.
 
 #include "include/cef_app.h"
-#include "rendererApp.hpp"
+#include "renderer_app.hpp"
+#include <memory>
+
 // Entry point function for sub-processes.
 int main(int argc, char* argv[]) {
   
-    
+   
   // Provide CEF with command-line arguments.
   CefMainArgs main_args(argc, argv);
 
