@@ -62,8 +62,12 @@ bool RendererApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
             points->SetValue(i, jsonPoint);
         }
         fSnakePoints = points;
-     //   pos = args->GetInt(0);
         context->Exit();
+        
+        // update the UI
+        auto frame = browser->GetMainFrame();
+        frame->ExecuteJavaScript("drawNow()", frame->GetURL(), 0);
+        
         return true;
     }
     

@@ -1,24 +1,48 @@
 <html>
 <head>
-<title>Message Router Example</title>
+<title>Snake</title>
 <script language="JavaScript">
 
-function lol(){
-    let canvas = document.getElementById("myCanvas");
-    let context = canvas.getContext("2d");
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = "#000000";
+class Canvas {
+    constructor(canvasNode, scale){
+        this._canvasNode = canvasNode;
+        this._scale = scale;
+    }
     
-    var points = window.getPositionForSnake();
- 
-    let scale = 10;
-  //  alert(points[0].y);
-    context.fillRect(scale*points[0].x, scale*points[0].y, scale, scale);
+    clear(){
+        let context = this._getContext();
+        context.clearRect(0, 0, this._canvasNode.width, this._canvasNode.height);
+    }
+    
+    drawPoint(point, color){
+        let context = this._getContext();
+        context.fillStyle = color;
+        let maxY = this._canvasNode.height/this._scale - 1;
+        let x = this._scale * point.x;
+        let y = this._scale * (maxY - point.y);
+        
+        context.fillRect(x, y, this._scale, this._scale);
+    }
+    
+    _getContext(){
+        return this._canvasNode.getContext("2d");
+    }
 
 }
 
-function call(){
-    setInterval(lol, 50);
+function drawNow(){
+    let canvasNode = document.getElementById("myCanvas");
+    
+    let canvas = new Canvas(canvasNode, 10);
+    canvas.clear();
+    
+    let points = window.getPositionForSnake();
+  
+    for (let i = 0; i<points.length; i++){
+      canvas.drawPoint(points[i],"#000000");
+      
+    }
+
 }
 
 // Send a query to the browser process.
@@ -36,14 +60,6 @@ function sendMessage() {
 
 </head>
 <body bgcolor="white">
-
-
-<form>
-Message: <input type="text" id="message" value="My Message">
-<br/><input type="button" onclick="call();" value="Send Message">
-<br/>You should see the reverse of your message below:
-<br/><textarea rows="10" cols="40" id="result"></textarea>
-</form>
 
 <canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
 
