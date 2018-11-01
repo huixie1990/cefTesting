@@ -12,16 +12,20 @@ set(CEFSIMPLE_SRCS
   simple_app.h
   snake_client.cc
   snake_client.h
-  snake_message_handler.cpp
-  snake_message_handler.hpp
 game_engine.hpp
 game_engine.cpp
 snake.cpp
 snake.hpp
+food.hpp
+food.cpp
 point.hpp
 point.cpp
 listner.hpp
 listner.cpp
+constant.hpp
+constant.cpp
+keyboard_handler.hpp
+keyboard_handler.cpp
   )
 set(CEFSIMPLE_SRCS_LINUX
   cefsimple_linux.cc
@@ -69,6 +73,8 @@ js_function_handler.hpp
 js_function_handler.cpp
  renderer_app.cpp
  renderer_app.hpp
+constant.hpp
+constant.cpp
  )
 set(CEFSIMPLE_HELPER_SRCS_MACOSX
   process_helper_mac.cc

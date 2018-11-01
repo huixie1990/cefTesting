@@ -10,44 +10,55 @@
 #include "listner.hpp"
 #include <vector>
 #include <chrono>
+#include <string>
+
+
+
 
 namespace snake {
+    std::string generateSID();
+    
     class Snake{
     public:
-        Snake():Snake({{1,1}}){};
-        Snake(const std::vector<Point>& bodyPoints)
-            :Snake(bodyPoints, 1.0){};
-        Snake(const std::vector<Point>& bodyPoints, double speed)
-            :Snake(bodyPoints,speed,Direction::up){};
-        Snake(const std::vector<Point>& bodyPoints, double speed, Direction direction):
-            fBodyPoints(bodyPoints), fSpeed(speed), fDirection(direction){};
-        
-        const std::vector<Point>& getPosition() const{
-            return fBodyPoints;
-        }
-        void timeStep(std::chrono::duration<double>);
-        void move(int steps);
-        void setSpeed(double speed);
-        void addListner(Listner<Snake>*);
+ 
+        Snake(const std::vector<Point>& bodyPoints,
+              double speed = 1.0,
+              Direction direction = Direction::up);
         
         // compiler generated essential operations
-        // do we really need to be expliticit?
-        Snake(const Snake&) = default;
-        Snake& operator=(const Snake&) = default;
+        Snake(const Snake&) = delete;
+        Snake& operator=(const Snake&) = delete;
         Snake(Snake&&) = default;
         Snake& operator=(Snake&&) = default;
         ~Snake() = default;
+        
+        const std::vector<Point>& getPosition() const;
+        std::string getSID() const;
+        Direction getDirection() const;
+        
+        void timeStep(std::chrono::duration<double>);
+        void accelerate();
+        
+        void setSpeed(double speed);
+        void setDirection(Direction dir);
+        void addListner(Listner<Snake>*);
+        
+
         
     private:
         std::vector<Point> fBodyPoints;
         double fSpeed;
         Direction fDirection;
+        Direction fPreviousDirection;
+        const std::string fSID;
         double fCurrentMovingDistance = 0;
         std::vector<Listner<Snake>*> fListners;
         
-        
         void notifyListners();
+        void move(int steps);
         void moveOneStep();
         bool isBodyValid(const std::vector<Point>&);
     };
+    
+   
 }

@@ -14,7 +14,16 @@ class Canvas {
         context.clearRect(0, 0, this._canvasNode.width, this._canvasNode.height);
     }
     
-    drawPoint(point, color){
+    drawSnake(snakeID){
+        let points = window.getPositionForSnake(snakeID);
+        if (typeof points != 'undefined') {
+            for (let i = 0; i<points.length; i++){
+                this._drawPoint(points[i],"#000000");
+            }
+        }
+    }
+    
+    _drawPoint(point, color){
         let context = this._getContext();
         context.fillStyle = color;
         let maxY = this._canvasNode.height/this._scale - 1;
@@ -36,26 +45,14 @@ function drawNow(){
     let canvas = new Canvas(canvasNode, 10);
     canvas.clear();
     
-    let points = window.getPositionForSnake();
-  
-    for (let i = 0; i<points.length; i++){
-      canvas.drawPoint(points[i],"#000000");
-      
+    let snakeIDs = window.getSnakeIDs();
+    for (let i = 0; i<snakeIDs.length; i++){
+        canvas.drawSnake(snakeIDs[i]);
+        
     }
 
 }
 
-// Send a query to the browser process.
-function sendMessage() {
-  // Results in a call to the OnQuery method in client_impl.cc.
-  window.cefQuery({
-    request: 'getSnakePosition:' + document.getElementById("message").value,
-    onSuccess: function(response) {
-      document.getElementById('result').value = 'Response: '+response;
-    },
-    onFailure: function(error_code, error_message) {}
-  });
-}
 </script>
 
 </head>

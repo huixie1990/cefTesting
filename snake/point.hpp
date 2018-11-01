@@ -7,10 +7,12 @@
 
 #pragma once
 namespace snake {
-struct Point{
-     int x;
-     int y;
-};
-
-enum class Direction{up, down, left, right};
+    struct Point{
+        int x;
+        int y;
+    };
+    
+    enum class Direction{up, down, left, right};
+    
+    Direction oposite(Direction);
 }

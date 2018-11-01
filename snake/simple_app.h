@@ -5,31 +5,42 @@
 #ifndef CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_
 #define CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_
 
+
 #include "include/cef_app.h"
 #include "snake_client.h"
+#include "game_engine.hpp"
 #include "snake.hpp"
 #include "listner.hpp"
+
+#include <chrono>
 // Implement application-level callbacks for the browser process.
 class SimpleApp : public CefApp, public CefBrowserProcessHandler, public  Listner<snake::Snake>{
- public:
-  SimpleApp();
-
-  // CefApp methods:
-  virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler()
-      OVERRIDE {
-    return this;
-  }
-
-  // CefBrowserProcessHandler methods:
-  virtual void OnContextInitialized() OVERRIDE;
-
+public:
+    SimpleApp(std::chrono::duration<double> sampleTime);
     
-    CefRefPtr<SnakeClient> getClient() const {return fClient;};
+    SimpleApp(const SimpleApp&) = delete;
+    SimpleApp& operator=(const SimpleApp&) = delete;
+    
+    // CefApp methods:
+    virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler()
+    OVERRIDE {
+        return this;
+    }
+    
+    // CefBrowserProcessHandler methods:
+    virtual void OnContextInitialized() OVERRIDE;
+    
+    // Listner interface
     virtual void notify(const snake::Snake&) override;
- private:
+    
+    snake::GameEngine& getGameEngine();
+    CefRefPtr<SnakeClient> getClient() const;
+    
+private:
+    snake::GameEngine fGameEngine;
     CefRefPtr<SnakeClient> fClient;
-  // Include the default reference counting implementation.
-  IMPLEMENT_REFCOUNTING(SimpleApp);
+    // Include the default reference counting implementation.
+    IMPLEMENT_REFCOUNTING(SimpleApp);
 };
 
 #endif  // CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_

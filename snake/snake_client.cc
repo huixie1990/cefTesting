@@ -3,7 +3,6 @@
 // can be found in the LICENSE file.
 #include <algorithm>
 #include "snake_client.h"
-#include "snake_message_handler.hpp"
 
 #include "include/cef_app.h"
 #include "include/wrapper/cef_helpers.h"
@@ -17,28 +16,18 @@ void SnakeClient::OnTitleChange(CefRefPtr<CefBrowser> browser,
     shared::OnTitleChange(browser, title);
 };
 
-bool SnakeClient::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
-                                      CefProcessId source_process,
-                                      CefRefPtr<CefProcessMessage> message) {
-    CEF_REQUIRE_UI_THREAD();
-    
-    return fMessageRouter->OnProcessMessageReceived(browser, source_process,
-                                                     message);
-}
+//bool SnakeClient::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
+//                                      CefProcessId source_process,
+//                                      CefRefPtr<CefProcessMessage> message) {
+//    CEF_REQUIRE_UI_THREAD();
+//
+//    return fMessageRouter->OnProcessMessageReceived(browser, source_process,
+//                                                     message);
+//}
 
 void SnakeClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     CEF_REQUIRE_UI_THREAD();
     fBrowsers.push_back(browser);
-    if (!fMessageRouter) {
-        // Create the browser-side router for query handling.
-        CefMessageRouterConfig config;
-        fMessageRouter = CefMessageRouterBrowserSide::Create(config);
-        
-        // Register handlers with the router.
-        fMessageHandler.reset(new snake::MessageHandler());
-        fMessageRouter->AddHandler(fMessageHandler.get(), false);
-    }
-    
     
     // Call the default shared implementation.
     shared::OnAfterCreated(browser);
@@ -59,26 +48,8 @@ void SnakeClient::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
         }
     }
     
-    if (fBrowsers.size() == 0) {
-        // Free the router when the last browser is closed.
-        fMessageRouter->RemoveHandler(fMessageHandler.get());
-        fMessageHandler.reset();
-        fMessageRouter = NULL;
-    }
-    
     // Call the default shared implementation.
     shared::OnBeforeClose(browser);
-}
-
-bool SnakeClient::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
-                            CefRefPtr<CefFrame> frame,
-                            CefRefPtr<CefRequest> request,
-                            bool user_gesture,
-                            bool is_redirect) {
-    CEF_REQUIRE_UI_THREAD();
-    
-    fMessageRouter->OnBeforeBrowse(browser, frame);
-    return false;
 }
 
 CefRefPtr<CefResourceHandler> SnakeClient::GetResourceHandler(
@@ -99,15 +70,6 @@ CefRefPtr<CefResourceHandler> SnakeClient::GetResourceHandler(
     
     return NULL;
 }
-
-void SnakeClient::OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser,
-                                       TerminationStatus status) {
-    CEF_REQUIRE_UI_THREAD();
-    
-    fMessageRouter->OnRenderProcessTerminated(browser);
-}
-
-
 
 // to use the shared utilities in the cef examples, I have to implement those nonsense functions
 namespace shared {

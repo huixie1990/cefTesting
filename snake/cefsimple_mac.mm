@@ -122,18 +122,15 @@
         // Initialize the AutoRelease pool.
         NSAutoreleasePool* autopool = [[NSAutoreleasePool alloc] init];
 
-        auto sampleTime = std::chrono::milliseconds(100);
-        snake::GameEngine engine(sampleTime);
-        
+        auto sampleTime = std::chrono::milliseconds(10);
         
         // Provide CEF with command-line arguments.
         CefMainArgs main_args(argc, argv);
 
         // Create a CefApp for the browser process. Other processes are handled by
         // process_helper_mac.cc.
-        CefRefPtr<SimpleApp> app = new SimpleApp();
+        CefRefPtr<SimpleApp> app = new SimpleApp(sampleTime);
         
-        engine.getSnake().addListner(app);
         // Initialize the SnakeApplication instance.
         [SnakeApplication sharedApplication];
 
@@ -153,16 +150,6 @@
         [delegate performSelectorOnMainThread:@selector(createApplication:)
                                    withObject:nil
                                 waitUntilDone:NO];
-
-        auto foo = [&engine,&sampleTime](std::future<void> futureObj){
-            while(futureObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout){
-               // std::cout << "hello\n";
-                engine.step();
-                std::this_thread::sleep_for(sampleTime);
-            }
-        };
-        
-       
         
         // Create a std::promise object
         std::promise<void> exitSignal;
@@ -170,7 +157,17 @@
         //Fetch std::future object associated with promise
         std::future<void> futureObj = exitSignal.get_future();
         
-        std::thread thread1 (foo, std::move(futureObj));
+        auto exitPredicate = [&futureObj](){
+            return futureObj.wait_for(std::chrono::milliseconds(1))
+                    != std::future_status::timeout;
+        };
+        
+        auto runGame = [&app, &exitPredicate](){
+            auto& engine = app->getGameEngine();
+            engine.runGameUntil(exitPredicate);
+        };
+        
+        std::thread thread1 (runGame);
         
         // Run the CEF message loop. This will block until CefQuitMessageLoop() is
         // called.

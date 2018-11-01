@@ -3,15 +3,18 @@
 // can be found in the LICENSE file.
 
 #pragma once
-#include <vector>
+
 #include "include/cef_client.h"
 #include "include/wrapper/cef_message_router.h"
-//#include <list>
+
+#include "keyboard_handler.hpp"
+#include <vector>
+
 
 class SnakeClient : public CefClient, public CefDisplayHandler, public CefLifeSpanHandler, public CefRequestHandler  {
     
 public:
-    SnakeClient() = default;
+    SnakeClient(CefRefPtr<snake::KeyboardHandler> keyboardHandler):fKeyboardHandler(keyboardHandler){};
     SnakeClient(const SnakeClient&) = delete;
     SnakeClient(SnakeClient&&) = default;
     SnakeClient& operator=(const SnakeClient&) = delete;
@@ -22,10 +25,11 @@ public:
     CefRefPtr<CefDisplayHandler> GetDisplayHandler() override { return this; }
     CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override { return this; }
     CefRefPtr<CefRequestHandler> GetRequestHandler() override { return this; }
-    bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
-                                  CefProcessId source_process,
-                                  CefRefPtr<CefProcessMessage> message) override;
-    
+    CefRefPtr<CefKeyboardHandler> GetKeyboardHandler() override { return fKeyboardHandler; }
+//    bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
+//                                  CefProcessId source_process,
+//                                  CefRefPtr<CefProcessMessage> message) override;
+//
     // CefDisplayHandler methods:
     void OnTitleChange(CefRefPtr<CefBrowser> browser,
                        const CefString& title) override;
@@ -35,27 +39,24 @@ public:
     bool DoClose(CefRefPtr<CefBrowser> browser) override;
     void OnBeforeClose(CefRefPtr<CefBrowser> browser) override;
     
-    // CefRequestHandler methods:
-    bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
-                        CefRefPtr<CefFrame> frame,
-                        CefRefPtr<CefRequest> request,
-                        bool user_gesture,
-                        bool is_redirect) override;
+//    // CefRequestHandler methods:
+//    bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
+//                        CefRefPtr<CefFrame> frame,
+//                        CefRefPtr<CefRequest> request,
+//                        bool user_gesture,
+//                        bool is_redirect) override;
     CefRefPtr<CefResourceHandler> GetResourceHandler(
                                                      CefRefPtr<CefBrowser> browser,
                                                      CefRefPtr<CefFrame> frame,
                                                      CefRefPtr<CefRequest> request) override;
-    void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser,
-                                   TerminationStatus status) override;
+//    void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser,
+//                                   TerminationStatus status) override;
     
     
     std::vector<CefRefPtr<CefBrowser>> getBrowsers() const {return fBrowsers;};
     
 private:
-    // Handles the browser side of query routing.
-    CefRefPtr<CefMessageRouterBrowserSide> fMessageRouter;
-    scoped_ptr<CefMessageRouterBrowserSide::Handler> fMessageHandler;
-    
+    CefRefPtr<snake::KeyboardHandler> fKeyboardHandler;
     std::vector<CefRefPtr<CefBrowser>> fBrowsers;
     
     IMPLEMENT_REFCOUNTING(SnakeClient);

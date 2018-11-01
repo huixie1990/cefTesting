@@ -6,10 +6,14 @@
 //
 
 #include "snake.hpp"
+#include "point.hpp"
 #include <cmath>
 
-#include <iostream>
 using namespace snake;
+
+Snake::Snake(const std::vector<Point>& bodyPoints,double speed,Direction direction):
+        fBodyPoints(bodyPoints), fSpeed(speed), fDirection(direction), fSID(generateSID()){};
+
 
 void Snake::timeStep(std::chrono::duration<double> timeStep){
     double oldDistance = fCurrentMovingDistance;
@@ -20,12 +24,15 @@ void Snake::timeStep(std::chrono::duration<double> timeStep){
     }
 }
 
+void Snake::accelerate(){
+    move(1);
+}
+
 void Snake::move(int steps){
     for(int i=0;i<steps;i++){
         moveOneStep();
     }
     notifyListners();
-  //  std::cout << "x: " << fBodyPoints.at(0).x << " . y: " << fBodyPoints.at(0).y <<std::endl;
 }
 
 void Snake::moveOneStep(){
@@ -49,7 +56,7 @@ void Snake::moveOneStep(){
     fBodyPoints.push_back(std::move(nextPoint));
     fBodyPoints.erase(fBodyPoints.begin());
     
-    
+    fPreviousDirection = fDirection;
 }
 
 void Snake::addListner(Listner<Snake>* listener){
@@ -60,4 +67,36 @@ void Snake::notifyListners(){
     for(const auto& listner: fListners){
         listner->notify(*this);
     }
+}
+
+
+std::string snake::generateSID(){
+    static int currentID = 0;
+    currentID++;
+    return std::to_string(currentID);
+}
+
+
+void Snake::setSpeed(double speed){
+    fSpeed = speed;
+}
+
+void Snake::setDirection(Direction dir){
+    if(fPreviousDirection == snake::oposite(dir)){
+        // can't move backwards
+        return;
+    }
+    fDirection = dir;
+}
+
+
+const std::vector<Point>& Snake::getPosition() const{
+    return fBodyPoints;
+}
+
+std::string Snake::getSID() const {
+    return fSID;
+}
+Direction Snake::getDirection() const {
+    return fDirection;
 }

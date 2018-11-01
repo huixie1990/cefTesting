@@ -8,27 +8,30 @@
 #pragma once
 
 #include <chrono>
+#include <vector>
+#include <functional>
+
 #include "snake.hpp"
 
 namespace snake {
     
-    // This class owns snakes, food, playground
-    
     class GameEngine{
-        
+        // This class owns snakes, food, playground
     public:
-        GameEngine():GameEngine(std::chrono::milliseconds(100)){};
-        GameEngine(std::chrono::duration<double> sampleTime): fSampleTime(sampleTime){
 
-        };
+        explicit GameEngine(std::chrono::duration<double> sampleTime);
+        GameEngine(const GameEngine&)=delete;
         
+        void runGameUntil(std::function<bool()> predicate);
         void step();
         
-        Snake& getSnake(){return fSnake;};
+        void sendDirectionToSnake(Direction dir, int snakeIdx);
         
+        std::vector<Snake>& getSnakes();
+        const std::vector<Snake>& getSnakes() const;
     private:
         std::chrono::duration<double> fSampleTime;
-        Snake fSnake = Snake({{0,0},{1,0},{2,0},{3,0}},20);
+        std::vector<Snake> fSnakes;
     };
     
 }
