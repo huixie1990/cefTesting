@@ -6,20 +6,25 @@
 //
 
 #include "point.hpp"
-using namespace snake;
-Direction snake::oposite(Direction dir){
+
+
+bool snake::operator==(const snake::Point& a, const snake::Point& b){
+    return a.x == b.x && a.y == b.y;
+}
+
+snake::Direction snake::oposite(Direction dir){
     switch (dir) {
-        case Direction::up:
-            return Direction::down;
+        case snake::Direction::up:
+            return snake::Direction::down;
             break;
-        case Direction::down:
-            return Direction::up;
+        case snake::Direction::down:
+            return snake::Direction::up;
             break;
-        case Direction::left:
-            return Direction::right;
+        case snake::Direction::left:
+            return snake::Direction::right;
             break;
-        case Direction::right:
-            return Direction::left;
+        case snake::Direction::right:
+            return snake::Direction::left;
             break;
         default:
             break;

@@ -18,6 +18,8 @@ snake.cpp
 snake.hpp
 food.hpp
 food.cpp
+boarder.hpp
+boarder.cpp
 point.hpp
 point.cpp
 listner.hpp
@@ -26,6 +28,8 @@ constant.hpp
 constant.cpp
 keyboard_handler.hpp
 keyboard_handler.cpp
+utils.hpp
+utils.cpp
   )
 set(CEFSIMPLE_SRCS_LINUX
   cefsimple_linux.cc
@@ -75,6 +79,8 @@ js_function_handler.cpp
  renderer_app.hpp
 constant.hpp
 constant.cpp
+renderer_snake_info.hpp
+renderer_snake_info.cpp
  )
 set(CEFSIMPLE_HELPER_SRCS_MACOSX
   process_helper_mac.cc

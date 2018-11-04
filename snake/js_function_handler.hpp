@@ -13,6 +13,8 @@ namespace snake {
 
     extern const std::string GET_POS_FUNC_NAME;
     extern const std::string GET_ID_FUNC_NAME;
+    extern const std::string GET_STATE_FUNC_NAME;
+    extern const std::string GET_FOOD_FUNC_NAME;
     
     class JsSnakeLocationHandler : public CefV8Handler {
     public:
@@ -45,5 +47,39 @@ namespace snake {
         CefRefPtr<RendererApp> fApp;
         // Provide the reference counting implementation for this class.
         IMPLEMENT_REFCOUNTING(JsSnakeIDHandler);
+    };
+    
+    
+    class JsSnakeStateHandler : public CefV8Handler {
+    public:
+        JsSnakeStateHandler(const CefRefPtr<RendererApp>& app):fApp(app){};
+        ~JsSnakeStateHandler() = default;
+        
+        bool Execute(const CefString& name,
+                     CefRefPtr<CefV8Value> object,
+                     const CefV8ValueList& arguments,
+                     CefRefPtr<CefV8Value>& retval,
+                     CefString& exception) override;
+    private:
+        CefRefPtr<RendererApp> fApp;
+        // Provide the reference counting implementation for this class.
+        IMPLEMENT_REFCOUNTING(JsSnakeStateHandler);
+    };
+    
+    
+    class JsFoodHandler : public CefV8Handler {
+    public:
+        JsFoodHandler(const CefRefPtr<RendererApp>& app):fApp(app){};
+        ~JsFoodHandler() = default;
+        
+        bool Execute(const CefString& name,
+                     CefRefPtr<CefV8Value> object,
+                     const CefV8ValueList& arguments,
+                     CefRefPtr<CefV8Value>& retval,
+                     CefString& exception) override;
+    private:
+        CefRefPtr<RendererApp> fApp;
+        // Provide the reference counting implementation for this class.
+        IMPLEMENT_REFCOUNTING(JsFoodHandler);
     };
 }

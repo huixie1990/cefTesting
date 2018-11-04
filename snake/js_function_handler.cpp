@@ -7,8 +7,11 @@
 
 #include "js_function_handler.hpp"
 
+
 const std::string snake::GET_POS_FUNC_NAME = "getPositionForSnake";
 const std::string snake::GET_ID_FUNC_NAME = "getSnakeIDs";
+const std::string snake::GET_STATE_FUNC_NAME = "getSnakeState";
+const std::string snake::GET_FOOD_FUNC_NAME = "getFoodPositions";
 
 bool snake::JsSnakeLocationHandler::Execute(const CefString& name,
                      CefRefPtr<CefV8Value> object,
@@ -47,6 +50,43 @@ bool snake::JsSnakeIDHandler::Execute(const CefString& name,
             jsSids->SetValue(i, jsSid);
         }
         retval = jsSids;
+        return true;
+    }
+    // Function does not exist.
+    return false;
+}
+
+bool snake::JsSnakeStateHandler::Execute(const CefString& name,
+                                      CefRefPtr<CefV8Value> object,
+                                      const CefV8ValueList& arguments,
+                                      CefRefPtr<CefV8Value>& retval,
+                                      CefString& exception)  {
+    if (name == snake::GET_STATE_FUNC_NAME) {
+        if(arguments.size()!=1){
+            return false;
+        }
+        auto arg = arguments.at(0);
+        if(!arg->IsString()){
+            return false;
+        }
+        
+        auto sid = arg->GetStringValue();
+        retval = fApp->getSnakeState(sid.ToString());
+        return true;
+    }
+    // Function does not exist.
+    return false;
+}
+
+bool snake::JsFoodHandler::Execute(const CefString& name,
+                                      CefRefPtr<CefV8Value> object,
+                                      const CefV8ValueList& arguments,
+                                      CefRefPtr<CefV8Value>& retval,
+                                      CefString& exception)  {
+    if (name == snake::GET_FOOD_FUNC_NAME) {
+
+        retval = fApp -> getFoodPositions();
+
         return true;
     }
     // Function does not exist.

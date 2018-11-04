@@ -16,6 +16,12 @@
 
 
 namespace snake {
+    
+    enum class SnakeState{
+        waiting, running, dead
+    };
+    std::string toString(SnakeState);
+    
     std::string generateSID();
     
     class Snake{
@@ -32,15 +38,19 @@ namespace snake {
         Snake& operator=(Snake&&) = default;
         ~Snake() = default;
         
+        // getter and setter
         const std::vector<Point>& getPosition() const;
         std::string getSID() const;
         Direction getDirection() const;
-        
-        void timeStep(std::chrono::duration<double>);
-        void accelerate();
-        
+        SnakeState getState() const;
+        void setState(SnakeState);
         void setSpeed(double speed);
         void setDirection(Direction dir);
+        
+        // operations
+        void moveTimeStep(std::chrono::duration<double>);
+        void accelerate();
+        
         void addListner(Listner<Snake>*);
         
 
@@ -52,9 +62,10 @@ namespace snake {
         Direction fPreviousDirection;
         const std::string fSID;
         double fCurrentMovingDistance = 0;
+        SnakeState fState = SnakeState::waiting;
         std::vector<Listner<Snake>*> fListners;
         
-        void notifyListners();
+        void notifyListners(const std::string&);
         void move(int steps);
         void moveOneStep();
         bool isBodyValid(const std::vector<Point>&);

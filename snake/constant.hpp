@@ -8,5 +8,12 @@
 #pragma once
 #include <string>
 namespace snake{
-    const std::string SNAKE_MOVE_MESSAGE = "snake_move";
+    extern const int CANVAS_WIDTH;
+    extern const int CANVAS_HEIGHT;
+    
+    extern const int FOOD_NUMBER;
+    
+    extern const std::string SNAKE_MOVE_MESSAGE;
+    extern const std::string SNAKE_STATE_MESSAGE;
+    extern const std::string FOOD_CREATE_MESSAGE;
 }

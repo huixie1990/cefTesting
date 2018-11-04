@@ -13,8 +13,10 @@
 #include "listner.hpp"
 
 #include <chrono>
+
 // Implement application-level callbacks for the browser process.
-class SimpleApp : public CefApp, public CefBrowserProcessHandler, public  Listner<snake::Snake>{
+class SimpleApp : public CefApp, public CefBrowserProcessHandler,
+                  public  Listner<snake::Snake>, public  Listner<snake::FoodGenerator>{
 public:
     SimpleApp(std::chrono::duration<double> sampleTime);
     
@@ -31,8 +33,9 @@ public:
     virtual void OnContextInitialized() OVERRIDE;
     
     // Listner interface
-    virtual void notify(const snake::Snake&) override;
-    
+    virtual void notified(const snake::Snake&, const std::string&) override;
+    virtual void notified(const snake::FoodGenerator&, const std::string&) override;
+                      
     snake::GameEngine& getGameEngine();
     CefRefPtr<SnakeClient> getClient() const;
     
@@ -41,6 +44,9 @@ private:
     CefRefPtr<SnakeClient> fClient;
     // Include the default reference counting implementation.
     IMPLEMENT_REFCOUNTING(SimpleApp);
+    
+    void sendSnakeMoveMessage(const snake::Snake&, const std::string&, CefRefPtr<CefBrowser>);
+    void sendSnakeStateMessage(const snake::Snake&, const std::string&, CefRefPtr<CefBrowser>);
 };
 
 #endif  // CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_

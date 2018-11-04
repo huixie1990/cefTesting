@@ -4,8 +4,8 @@
 
 #include "simple_app.h"
 #include "snake_client.h"
-#include "constant.hpp"
 #include "keyboard_handler.hpp"
+#include "constant.hpp"
 #include <string>
 #include <thread>
 #include <functional>
@@ -24,6 +24,7 @@ SimpleApp::SimpleApp(std::chrono::duration<double> sampleTime): fGameEngine(samp
     for(auto& snake :fGameEngine.getSnakes()){
         snake.addListner(this);  //app owns snakes. no need to remove listner
     }
+    fGameEngine.getFoodGenerator().addListner(this);
 };
 
 void SimpleApp::OnContextInitialized() {
@@ -54,25 +55,80 @@ void SimpleApp::OnContextInitialized() {
     // Create the first browser window.
     CefBrowserHost::CreateBrowser(window_info, fClient, url, browser_settings,
                                   NULL);
+    
 }
 
 
+snake::GameEngine& SimpleApp::getGameEngine() {
+    return fGameEngine;
+}
 
-void SimpleApp::notify(const snake::Snake& snake){
+CefRefPtr<SnakeClient> SimpleApp::getClient() const {
+    return fClient;
+}
+
+
+void SimpleApp::notified(const snake::Snake& snake, const std::string& snakeMessage){
     auto browsers = getClient()->getBrowsers();
     if(browsers.empty()){
         return;
     }
     auto browser = browsers.at(0);
+    auto message = snakeMessage + ":" + snake.getSID();
     
-    auto message = snake::SNAKE_MOVE_MESSAGE + ":" + snake.getSID();
+    if (snakeMessage == snake::SNAKE_MOVE_MESSAGE){
+        sendSnakeMoveMessage(snake, message, browser);
+    } else if (snakeMessage == snake::SNAKE_STATE_MESSAGE){
+        sendSnakeStateMessage(snake, message, browser);
+    }
+}
+
+void SimpleApp::notified(const snake::FoodGenerator& generator, const std::string& generatorMessage){
+    auto browsers = getClient()->getBrowsers();
+    if(browsers.empty()){
+        return;
+    }
+    auto browser = browsers.at(0);
+
+    CefRefPtr<CefProcessMessage> msg= CefProcessMessage::Create(generatorMessage);
+    
+    // Retrieve the argument list object.
+    CefRefPtr<CefListValue> args = msg->GetArgumentList();
+    
+    // Populate the argument values.
+    const auto& foods = generator.getFoods();
+    args->SetSize(foods.size());
+    
+    for(decltype(foods.size()) i=0; i<foods.size(); i++){
+        auto position = foods[i].getPosition();
+        CefRefPtr<CefDictionaryValue> point = CefDictionaryValue::Create();
+        point->SetInt("x", position.x);
+        point->SetInt("y", position.y);
+        args->SetDictionary(i, point);
+    }
+    
+    // Send the process message to the render process.
+    // Use PID_BROWSER instead when sending a message to the browser process.
+    browser->SendProcessMessage(PID_RENDERER, msg);
+    
+}
+
+
+
+
+//private:
+void SimpleApp::sendSnakeMoveMessage(
+            const snake::Snake& snake,
+            const std::string& message,
+            CefRefPtr<CefBrowser> browser){
+    
     CefRefPtr<CefProcessMessage> msg= CefProcessMessage::Create(message);
     
     // Retrieve the argument list object.
     CefRefPtr<CefListValue> args = msg->GetArgumentList();
     
     // Populate the argument values.
-    const auto snakePosition = snake.getPosition();
+    const auto& snakePosition = snake.getPosition();
     args->SetSize(snakePosition.size());
     
     for(decltype(snakePosition.size()) i=0; i<snakePosition.size(); i++){
@@ -87,14 +143,26 @@ void SimpleApp::notify(const snake::Snake& snake){
     browser->SendProcessMessage(PID_RENDERER, msg);
 }
 
-
-snake::GameEngine& SimpleApp::getGameEngine() {
-    return fGameEngine;
+void SimpleApp::sendSnakeStateMessage(
+                    const snake::Snake& snake,
+                    const std::string& message,
+                    CefRefPtr<CefBrowser> browser){
+    
+    CefRefPtr<CefProcessMessage> msg= CefProcessMessage::Create(message);
+    
+    // Retrieve the argument list object.
+    CefRefPtr<CefListValue> args = msg->GetArgumentList();
+    
+    // Populate the argument values.
+    const auto snakeState = snake.getState();
+    
+    args->SetString(0, snake::toString(snakeState));
+    
+    // Send the process message to the render process.
+    // Use PID_BROWSER instead when sending a message to the browser process.
+    browser->SendProcessMessage(PID_RENDERER, msg);
 }
 
-CefRefPtr<SnakeClient> SimpleApp::getClient() const {
-    return fClient;
-}
 
 // non sense moethod that the cef example shared utilities forced to implement
 CefRefPtr<CefApp> shared::CreateBrowserProcessApp(){

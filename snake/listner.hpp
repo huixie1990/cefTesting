@@ -7,9 +7,10 @@
 
 #pragma once
 
+#include <string>
 template <typename T>
 class Listner{
 public:
-    virtual void notify(const T&) =0;
+    virtual void notified(const T&, const std::string&) =0;
     virtual ~Listner() = default;
 };

@@ -8,6 +8,9 @@
 
 #include "include/cef_app.h"
 #include "include/wrapper/cef_message_router.h"
+
+#include "renderer_snake_info.hpp"
+
 #include <unordered_map>
 #include <string>
 
@@ -38,12 +41,18 @@ public:
                                   CefRefPtr<CefProcessMessage> message) override;
     
     const CefRefPtr<CefV8Value>& getSnakePosition(std::string sid) const;
+    const CefRefPtr<CefV8Value>& getSnakeState(std::string sid) const;
+    const CefRefPtr<CefV8Value> getFoodPositions() const;
     std::vector<std::string> getSnakeIDs() const;
     
 private:
-    // Handles the renderer side of query routing.
-  //  CefRefPtr<CefMessageRouterRendererSide> fMessageRouter;
-    std::unordered_map<std::string, CefRefPtr<CefV8Value>> fSnakesPoints;
+    std::unordered_map<std::string, snake::SnakeInfo> fSnakesInfo;
+    CefRefPtr<CefV8Value> fFoods;
     IMPLEMENT_REFCOUNTING(RendererApp);
     
+    void handleMoveMessage(CefRefPtr<CefBrowser>, CefRefPtr<CefProcessMessage>);
+    void handleStateMessage(CefRefPtr<CefBrowser>, CefRefPtr<CefProcessMessage>);
+    void handleFoodMessage(CefRefPtr<CefBrowser>, CefRefPtr<CefProcessMessage>);
+    
+    CefRefPtr<CefV8Value> createPointArrayFromArgs(CefRefPtr<CefListValue>);
 };

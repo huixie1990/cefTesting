@@ -8,14 +8,17 @@
 #include "snake.hpp"
 #include "point.hpp"
 #include <cmath>
-
+#include "constant.hpp"
 using namespace snake;
 
 Snake::Snake(const std::vector<Point>& bodyPoints,double speed,Direction direction):
         fBodyPoints(bodyPoints), fSpeed(speed), fDirection(direction), fSID(generateSID()){};
 
 
-void Snake::timeStep(std::chrono::duration<double> timeStep){
+void Snake::moveTimeStep(std::chrono::duration<double> timeStep){
+    if( fState!= SnakeState::running){
+        return;
+    }
     double oldDistance = fCurrentMovingDistance;
     fCurrentMovingDistance += timeStep.count() * fSpeed;
     
@@ -25,14 +28,27 @@ void Snake::timeStep(std::chrono::duration<double> timeStep){
 }
 
 void Snake::accelerate(){
+    if( fState!= SnakeState::running){
+        return;
+    }
     move(1);
 }
 
+void Snake::setState(SnakeState state){
+    fState = state;
+    notifyListners(snake::SNAKE_STATE_MESSAGE);
+}
+
+SnakeState Snake::getState() const{
+    return fState;
+}
+
+// private
 void Snake::move(int steps){
     for(int i=0;i<steps;i++){
         moveOneStep();
     }
-    notifyListners();
+    notifyListners(snake::SNAKE_MOVE_MESSAGE);
 }
 
 void Snake::moveOneStep(){
@@ -63,19 +79,11 @@ void Snake::addListner(Listner<Snake>* listener){
     fListners.push_back(listener);
 }
 
-void Snake::notifyListners(){
+void Snake::notifyListners(const std::string& message){
     for(const auto& listner: fListners){
-        listner->notify(*this);
+        listner->notified(*this, message);
     }
 }
-
-
-std::string snake::generateSID(){
-    static int currentID = 0;
-    currentID++;
-    return std::to_string(currentID);
-}
-
 
 void Snake::setSpeed(double speed){
     fSpeed = speed;
@@ -99,4 +107,28 @@ std::string Snake::getSID() const {
 }
 Direction Snake::getDirection() const {
     return fDirection;
+}
+
+// free functions
+
+std::string snake::toString(SnakeState state){
+    switch (state) {
+        case SnakeState::waiting:
+            return "waiting";
+            break;
+        case SnakeState::running:
+            return "running";
+            break;
+        case SnakeState::dead:
+            return "dead";
+            break;
+        default:
+            break;
+    }
+}
+
+std::string snake::generateSID(){
+    static int currentID = 0;
+    currentID++;
+    return std::to_string(currentID);
 }

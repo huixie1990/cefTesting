@@ -16,14 +16,20 @@ class Canvas {
     
     drawSnake(snakeID){
         let points = window.getPositionForSnake(snakeID);
+        let state = window.getSnakeState(snakeID);
         if (typeof points != 'undefined') {
             for (let i = 0; i<points.length; i++){
-                this._drawPoint(points[i],"#000000");
+                this.drawPoint(points[i], this._getColor(state));
             }
         }
     }
     
-    _drawPoint(point, color){
+    setSize(x, y){
+        this._canvasNode.width = x * this._scale;
+        this._canvasNode.height = y * this._scale;
+    }
+    
+    drawPoint(point, color){
         let context = this._getContext();
         context.fillStyle = color;
         let maxY = this._canvasNode.height/this._scale - 1;
@@ -31,6 +37,23 @@ class Canvas {
         let y = this._scale * (maxY - point.y);
         
         context.fillRect(x, y, this._scale, this._scale);
+    }
+    
+    _getColor(state){
+        switch(state){
+            case "running":
+                return "#000000";
+                break;
+            case "dead":
+                return "#FF0000";
+                break;
+            case "waiting":
+                return "#EEEEEE";
+                break;
+            default:
+                return "#888888"
+                
+        }
     }
     
     _getContext(){
@@ -48,9 +71,24 @@ function drawNow(){
     let snakeIDs = window.getSnakeIDs();
     for (let i = 0; i<snakeIDs.length; i++){
         canvas.drawSnake(snakeIDs[i]);
-        
+    }
+    
+    let foodPoints = window.getFoodPositions();
+    if(!foodPoints){
+        return;
     }
 
+    for (let i = 0; i < foodPoints.length; i++){
+        canvas.drawPoint(foodPoints[i], "#444444");
+    }
+}
+
+function setSize(x,y){
+    let canvasNode = document.getElementById("myCanvas");
+    
+    let canvas = new Canvas(canvasNode, 10);
+    
+    canvas.setSize(x,y);
 }
 
 </script>
@@ -58,7 +96,7 @@ function drawNow(){
 </head>
 <body bgcolor="white">
 
-<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
+<canvas id="myCanvas" width="500" height="500" style="border:10px solid #d3d3d3;">
 
 </body>
 </html>

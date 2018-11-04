@@ -7,12 +7,19 @@
 
 #pragma once
 namespace snake {
+    
     struct Point{
         int x;
         int y;
+        
+        Point(int ix, int iy): x(ix), y(iy){};
     };
+    
+    bool operator==(const snake::Point&, const snake::Point&);
     
     enum class Direction{up, down, left, right};
     
     Direction oposite(Direction);
 }
+
+

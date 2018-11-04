@@ -162,7 +162,11 @@
                     != std::future_status::timeout;
         };
         
-        auto runGame = [&app, &exitPredicate](){
+        auto runGame = [&app, &exitPredicate,&sampleTime](){
+            while(app->getClient()->getBrowsers().size() ==0 ){
+                std::this_thread::sleep_for(sampleTime);
+            }
+            
             auto& engine = app->getGameEngine();
             engine.runGameUntil(exitPredicate);
         };

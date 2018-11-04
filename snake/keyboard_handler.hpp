@@ -21,7 +21,7 @@ namespace snake{
         int right;
     };
     
-    extern const std::vector<MovementKeys> MOVE_KEY_SETS;
+    //extern const std::vector<MovementKeys> MOVE_KEY_SETS;
     
     class KeyPressingHandler{
     public:
@@ -38,13 +38,25 @@ namespace snake{
         
         bool canHandle(int key) override;
         void handle(int key) override;
-      
+        
     private:
         std::unordered_map<int,Direction> fKeyMap;
         GameEngine* fGameEngine;
         int fSnakeIndex;
     };
     
+    class GameStateKeyHandler : public KeyPressingHandler{
+    public:
+        GameStateKeyHandler(const int startKey, GameEngine*);
+        ~GameStateKeyHandler() = default;
+        
+        bool canHandle(int key) override;
+        void handle(int key) override;
+        
+    private:
+        const int fStartKey;
+        GameEngine* fGameEngine;
+    };
     
     class KeyboardHandler : public CefKeyboardHandler{
     public:
