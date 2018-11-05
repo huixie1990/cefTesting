@@ -17,7 +17,7 @@ class Canvas {
     drawSnake(snakeID){
         let points = window.getPositionForSnake(snakeID);
         let state = window.getSnakeState(snakeID);
-        if (typeof points != 'undefined') {
+        if (points) {
             for (let i = 0; i<points.length; i++){
                 this.drawPoint(points[i], this._getColor(state));
             }
@@ -48,7 +48,7 @@ class Canvas {
                 return "#FF0000";
                 break;
             case "waiting":
-                return "#EEEEEE";
+                return "#AAAAAA";
                 break;
             default:
                 return "#888888"
@@ -79,7 +79,7 @@ function drawNow(){
     }
 
     for (let i = 0; i < foodPoints.length; i++){
-        canvas.drawPoint(foodPoints[i], "#444444");
+        canvas.drawPoint(foodPoints[i], "#00FF00");
     }
 }
 

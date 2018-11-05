@@ -15,13 +15,25 @@ Point Food::getPosition() const {
     return fPosition;
 }
 
+bool snake::operator==(const Food& a, const Food& b){
+    return a.getPosition() == b.getPosition();
+}
+
 void FoodGenerator::step(){
-    if(fState == FoodGenState::idle){
-        return;
-    }
     if(shouldGenerate()){
         generate();
     }
+}
+
+void FoodGenerator::reset(){
+    fFoods.clear();
+    fState = FoodGenState::idle;
+    notifyListners(FOOD_CREATE_MESSAGE);
+}
+
+void FoodGenerator::foodEaten(const Food& food){
+    fFoods.erase(std::find(fFoods.begin(),fFoods.end(),food));
+    notifyListners(FOOD_CREATE_MESSAGE);
 }
 
 bool FoodGenerator::shouldGenerate(){

@@ -12,7 +12,9 @@
 using namespace snake;
 
 Snake::Snake(const std::vector<Point>& bodyPoints,double speed,Direction direction):
-        fBodyPoints(bodyPoints), fSpeed(speed), fDirection(direction), fSID(generateSID()){};
+        fBodyPoints(bodyPoints), fSpeed(speed), fDirection(direction),
+        fInitialPoints(bodyPoints), fInitialSpeed(speed), fInitialDirection(direction),
+        fSID(generateSID()){};
 
 
 void Snake::moveTimeStep(std::chrono::duration<double> timeStep){
@@ -32,6 +34,15 @@ void Snake::accelerate(){
         return;
     }
     move(1);
+}
+
+void Snake::reset(){
+    fBodyPoints = fInitialPoints;
+    fSpeed = fInitialSpeed;
+    fDirection = fInitialDirection;
+    fState = SnakeState::waiting;
+    notifyListners(snake::SNAKE_MOVE_MESSAGE);
+    notifyListners(snake::SNAKE_STATE_MESSAGE);
 }
 
 void Snake::setState(SnakeState state){
@@ -54,19 +65,7 @@ void Snake::move(int steps){
 void Snake::moveOneStep(){
     snake::Point nextPoint = [this](){
         auto currentPoint = fBodyPoints.back();
-        switch (fDirection) {
-            case Direction::up:
-                return snake::Point{currentPoint.x, currentPoint.y+1};
-            case Direction::down:
-                return snake::Point{currentPoint.x, currentPoint.y-1};
-            case Direction::left:
-                return snake::Point{currentPoint.x - 1, currentPoint.y};
-            case Direction::right:
-                return snake::Point{currentPoint.x + 1, currentPoint.y};
-            default:
-                break;
-        }
-        return snake::Point({1,1});
+        return getNextPoint(currentPoint, fDirection);
     }();
     
     fBodyPoints.push_back(std::move(nextPoint));
@@ -131,4 +130,37 @@ std::string snake::generateSID(){
     static int currentID = 0;
     currentID++;
     return std::to_string(currentID);
+}
+
+
+SnakeBuilder& SnakeBuilder::tail(const Point& tail){
+    fTail = tail;
+    return *this;
+}
+
+SnakeBuilder& SnakeBuilder::length(int length){
+    fLength = length;
+    return *this;
+}
+
+SnakeBuilder& SnakeBuilder::speed(double speed){
+    fSpeed = speed;
+    return *this;
+}
+
+SnakeBuilder& SnakeBuilder::direction(Direction dir){
+    fDirection = dir;
+    return *this;
+}
+
+Snake SnakeBuilder::build() const{
+    std::vector<Point> points;
+    points.push_back(fTail);
+    auto currentPoint = fTail;
+    for(int i = 0; i< fLength - 1; i++){
+        auto nextPoint = getNextPoint(currentPoint, fDirection);
+        points.push_back(nextPoint);
+        currentPoint = nextPoint;
+    }
+    return Snake{points, fSpeed, fDirection};
 }

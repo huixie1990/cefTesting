@@ -14,16 +14,28 @@
 
 #include <thread>
 #include <memory>
-#include <iostream>
+
+#include <algorithm>
+
 using namespace snake;
 
 GameEngine::GameEngine(std::chrono::duration<double> sampleTime):
         fSampleTime(sampleTime), fBoarder({CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1}),
         fFoodGenerator(FOOD_NUMBER, this){
-    fSnakes.emplace_back(
-            std::vector<Point>{{0,0},{1,0},{2,0},{3,0}},2.5, Direction::up);
-    fSnakes.emplace_back(
-            std::vector<Point>{{49,49},{49,48},{49,47},{49,46},{49,45}}, 1, Direction::left);
+            
+        fSnakes.emplace_back(SnakeBuilder{}
+                          .tail({0,0})
+                          .length(3)
+                          .direction(Direction::right)
+                          .speed(5).build());
+
+        fSnakes.emplace_back(SnakeBuilder{}
+                          .tail({49,49})
+                          .length(6)
+                          .direction(Direction::down)
+                          .speed(1).build());
+            
+        fTransitions = createTransitions();
 };
 
 
@@ -72,6 +84,12 @@ void GameEngine::sendDirectionToSnake(Direction dir, int snakeIdx){
 void GameEngine::gameStartRequested(){
     if(fGameState == GameState::idle){
         setState(GameState::running);
+        return;
+    }
+    
+    if(fGameState == GameState::finished){
+        setState(GameState::idle);
+        return;
     }
 }
 
@@ -111,8 +129,13 @@ void GameEngine::step(){
     } else{
         during(fGameState);
     }
-
     fPreviousState = fGameState;
+    for (auto& transition: fTransitions){
+        if(transition.source == fGameState && transition.condition()){
+            fGameState = transition.destination;
+        }
+    }
+    
 }
 
 void GameEngine::stepSnakes(){
@@ -141,6 +164,13 @@ bool GameEngine::snakeHeadHitsObject(const Snake& snakeUnderCheck){
 
 void GameEngine::entry(GameState state){
     switch (state) {
+        case GameState::idle:
+            for(auto& snake: fSnakes){
+                snake.reset();
+            }
+            fFoodGenerator.reset();
+            break;
+            
         case GameState::running:
             for(auto& snake: fSnakes){
                 snake.setState(SnakeState::running);
@@ -158,9 +188,36 @@ void GameEngine::during(GameState state){
         case GameState::running:
             stepSnakes();
             fFoodGenerator.step();
+            for(auto& food: fFoodGenerator.getFoods()){
+                for(auto& snake: fSnakes){
+                    const auto& bodyPoints = snake.getPosition();
+                    if(std::find(bodyPoints.cbegin(), bodyPoints.cend(),food.getPosition())
+                       != bodyPoints.cend()){
+                        fFoodGenerator.foodEaten(food);
+                        break;
+                    }
+                }
+            }
             break;
             
         default:
             break;
     }
+}
+
+
+std::vector<Transition> GameEngine::createTransitions(){
+    std::vector<Transition> transitions;
+    transitions.push_back(Transition{
+                    GameState::running,
+                    GameState::finished,
+                    [this](){
+                        for(const auto& snake: fSnakes){
+                            if(snake.getState() != SnakeState::dead){
+                                return false;
+                            }
+                        }
+                        return true; // if all snakes died, game is finished
+                    }});
+    return transitions;
 }

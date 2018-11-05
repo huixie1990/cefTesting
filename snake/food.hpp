@@ -29,10 +29,15 @@ namespace snake {
         idle, running
     };
     
+    bool operator==(const Food& a, const Food& b);
+    
     class FoodGenerator{
     public:
         FoodGenerator(int size, GameEngine* engine) : fSize(size), fGameEngine(engine){};
+        
         void step();
+        void reset();
+        void foodEaten(const Food&);
         
         bool shouldGenerate();
         void generate();

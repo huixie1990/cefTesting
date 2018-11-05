@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include <vector>
 namespace snake {
     
     struct Point{
@@ -18,6 +19,8 @@ namespace snake {
     bool operator==(const snake::Point&, const snake::Point&);
     
     enum class Direction{up, down, left, right};
+    
+    Point getNextPoint(const Point&, Direction);
     
     Direction oposite(Direction);
 }

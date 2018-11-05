@@ -19,6 +19,12 @@ namespace snake {
         idle, running, finished
     };
     
+    struct Transition{
+        GameState source;
+        GameState destination;
+        std::function<bool()> condition;
+    };
+    
     class GameEngine{
         // This class owns snakes, food, boarder
     public:
@@ -42,6 +48,7 @@ namespace snake {
         const FoodGenerator& getFoodGenerator() const;
         const Boarder& getBoarder() const;
         void setState(GameState);
+        
     private:
         std::chrono::duration<double> fSampleTime;
         std::vector<Snake> fSnakes;
@@ -49,12 +56,16 @@ namespace snake {
         FoodGenerator fFoodGenerator;
         GameState fGameState  = GameState::idle;
         GameState fPreviousState  = GameState::idle;
+        std::vector<Transition> fTransitions;
         
         void step();
         void stepSnakes();
         void entry(GameState);
         void during(GameState);
         bool snakeHeadHitsObject(const Snake&);
+        
+        std::vector<Transition> createTransitions();
     };
     
+
 }

@@ -50,7 +50,7 @@ namespace snake {
         // operations
         void moveTimeStep(std::chrono::duration<double>);
         void accelerate();
-        
+        void reset();
         void addListner(Listner<Snake>*);
         
 
@@ -59,6 +59,11 @@ namespace snake {
         std::vector<Point> fBodyPoints;
         double fSpeed;
         Direction fDirection;
+        
+        const std::vector<Point> fInitialPoints;
+        const double fInitialSpeed;
+        const Direction fInitialDirection;
+        
         Direction fPreviousDirection;
         const std::string fSID;
         double fCurrentMovingDistance = 0;
@@ -71,5 +76,24 @@ namespace snake {
         bool isBodyValid(const std::vector<Point>&);
     };
     
+    
+    class SnakeBuilder{
+    public:
+        SnakeBuilder() = default;
+        ~SnakeBuilder() = default;
+        
+        SnakeBuilder& tail(const Point&);
+        SnakeBuilder& length(int);
+        SnakeBuilder& speed(double);
+        SnakeBuilder& direction(Direction);
+        
+        Snake build() const;
+    private:
+        double fSpeed = 1.0;
+        Direction fDirection = Direction::up;
+        Point fTail = {0,0};
+        int fLength = 1;
+    };
    
+    
 }
