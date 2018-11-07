@@ -198,28 +198,34 @@ std::vector<Transition> GameEngine::createTransitions(){
 std::map<GameState, StateAction> GameEngine::createStates(){
     std::map<GameState, StateAction> actions;
     
+    auto idleEntry = [this](){
+        for(auto& snake: fSnakes){
+            snake.reset();
+        }
+        fFoodGenerator.reset();
+    };
+    
+    auto runningEntry =  [this](){
+        for(auto& snake: fSnakes){
+            snake.setState(SnakeState::running);
+        }
+        fFoodGenerator.setState(FoodGenState::running);
+    };
+    
+    auto runningDuring = [this](){
+        stepSnakes();
+        fFoodGenerator.step([this](){return getFreePoints();});
+        checkSnakeEatsFood();
+    };
+
     actions.emplace(GameState::idle, StateAction{
-        [this](){
-            for(auto& snake: fSnakes){
-                snake.reset();
-            }
-            fFoodGenerator.reset();
-        },// entry
+        idleEntry,
         [](){}// during
     });
     
     actions.emplace(GameState::running, StateAction{
-        [this](){
-            for(auto& snake: fSnakes){
-                snake.setState(SnakeState::running);
-            }
-            fFoodGenerator.setState(FoodGenState::running);
-        }, // entry
-        [this](){
-            stepSnakes();
-            fFoodGenerator.step([this](){return getFreePoints();});
-            checkSnakeEatsFood();
-        } // during
+        runningEntry,
+        runningDuring
     });
     
     actions.emplace(GameState::finished, StateAction{
