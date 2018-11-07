@@ -33,14 +33,14 @@ namespace snake {
     
     class FoodGenerator{
     public:
-        FoodGenerator(int size, GameEngine* engine) : fSize(size), fGameEngine(engine){};
+        FoodGenerator(int size) : fSize(size){};
         
-        void step();
+        void step(std::function<std::vector<Point>()>);
         void reset();
         void foodEaten(const Food&);
         
         bool shouldGenerate();
-        void generate();
+        void generate(std::function<std::vector<Point>()>&);
         
         void addListner(Listner<FoodGenerator>*);
         
@@ -49,12 +49,11 @@ namespace snake {
     private:
         std::vector<Food> fFoods;
         decltype(fFoods.size()) fSize;
-        GameEngine* fGameEngine;
         std::vector<Listner<FoodGenerator>*> fListners;
         FoodGenState fState = FoodGenState::idle;
         
         
         void notifyListners(const std::string&);
-        void generateFood(int);
+        void generateFood(size_t, std::function<std::vector<Point>()>&);
     };
 }

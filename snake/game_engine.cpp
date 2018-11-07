@@ -20,8 +20,9 @@
 using namespace snake;
 
 GameEngine::GameEngine(std::chrono::duration<double> sampleTime):
-        fSampleTime(sampleTime), fBoarder({CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1}),
-        fFoodGenerator(FOOD_NUMBER, this){
+        fSampleTime(sampleTime),
+        fBoarder({CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1}),
+        fFoodGenerator(FOOD_NUMBER){
             
         fSnakes.emplace_back(SnakeBuilder{}
                           .tail({0,0})
@@ -216,7 +217,7 @@ std::map<GameState, StateAction> GameEngine::createStates(){
         }, // entry
         [this](){
             stepSnakes();
-            fFoodGenerator.step();
+            fFoodGenerator.step([this](){return getFreePoints();});
             checkSnakeEatsFood();
         } // during
     });

@@ -6,6 +6,8 @@
 //
 
 #include <random>
+#include <algorithm>
+
 #include "food.hpp"
 #include "game_engine.hpp"
 #include "constant.hpp"
@@ -19,9 +21,9 @@ bool snake::operator==(const Food& a, const Food& b){
     return a.getPosition() == b.getPosition();
 }
 
-void FoodGenerator::step(){
+void FoodGenerator::step(std::function<std::vector<Point>()> provider){
     if(shouldGenerate()){
-        generate();
+        generate(provider);
     }
 }
 
@@ -40,8 +42,8 @@ bool FoodGenerator::shouldGenerate(){
     return fFoods.size() < fSize;
 }
 
-void FoodGenerator::generate(){
-    generateFood(fSize - fFoods.size());
+void FoodGenerator::generate(std::function<std::vector<Point>()>& provider){
+    generateFood(fSize - fFoods.size(), provider);
 }
 
 const std::vector<Food>& FoodGenerator::getFoods() const{
@@ -65,19 +67,19 @@ void FoodGenerator::notifyListners(const std::string& message){
 }
 
 
-void FoodGenerator::generateFood(int num){
-    
-    auto freePoints = fGameEngine->getFreePoints();
+void FoodGenerator::generateFood(size_t num,
+                                std::function<std::vector<Point>()>& provider){
+    auto freePoints = provider();
+    num = std::min(num, freePoints.size());
     std::random_shuffle(freePoints.begin(), freePoints.end());
-//    std::random_device rd;  //Will be used to obtain a seed for the random number engine
-//    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-//    std::uniform_int_distribution<> disX(0, freePoints.size()+1);
-//
-    //fFoods.emplace_back(freePoints[disX(gen)]);
     
-    for (int i =0; i< num;i++){
-        fFoods.emplace_back(freePoints[i]);
-    }
+    std::transform(freePoints.begin(),
+                   freePoints.begin() + num,
+                   std::back_inserter(fFoods),
+                   [](const Point& point){
+                       return Food(point);
+                   });
+    
     
     notifyListners(FOOD_CREATE_MESSAGE);
 }
