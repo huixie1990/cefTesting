@@ -2,7 +2,10 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 #include <algorithm>
+#include <iostream>
+
 #include "snake_client.h"
+#include "constant.hpp"
 
 #include "include/cef_app.h"
 #include "include/wrapper/cef_helpers.h"
@@ -10,20 +13,28 @@
 #include "examples/shared/client_util.h"
 #include "examples/shared/resource_util.h"
 
+
+
 void SnakeClient::OnTitleChange(CefRefPtr<CefBrowser> browser,
                            const CefString& title) {
     // Call the default shared implementation.
     shared::OnTitleChange(browser, title);
 };
 
-//bool SnakeClient::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
-//                                      CefProcessId source_process,
-//                                      CefRefPtr<CefProcessMessage> message) {
-//    CEF_REQUIRE_UI_THREAD();
-//
-//    return fMessageRouter->OnProcessMessageReceived(browser, source_process,
-//                                                     message);
-//}
+bool SnakeClient::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
+                                      CefProcessId source_process,
+                                      CefRefPtr<CefProcessMessage> message) {
+    CEF_REQUIRE_UI_THREAD();
+    if(message->GetName() == snake::REQUEST_POSITIONS_MESSAGE){
+        for (const auto& snake:fEngine->getSnakes()){
+            snake.notifyListners(snake::SNAKE_MOVE_MESSAGE);
+            snake.notifyListners(snake::SNAKE_STATE_MESSAGE);
+        }
+        return true;
+    }
+    std::cout << "\n\n\n\n";
+    return false;
+}
 
 void SnakeClient::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     CEF_REQUIRE_UI_THREAD();

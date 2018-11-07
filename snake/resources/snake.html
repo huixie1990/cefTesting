@@ -4,9 +4,12 @@
 <script language="JavaScript">
 
 class Canvas {
-    constructor(canvasNode, scale){
+    constructor(canvasNode, size, scale){
         this._canvasNode = canvasNode;
+        this._size = size;
         this._scale = scale;
+        
+        this._setSize(size.width, size.height);
     }
     
     clear(){
@@ -17,14 +20,18 @@ class Canvas {
     drawSnake(snakeID){
         let points = window.getPositionForSnake(snakeID);
         let state = window.getSnakeState(snakeID);
-        if (points) {
-            for (let i = 0; i<points.length; i++){
-                this.drawPoint(points[i], this._getColor(state));
-            }
+        if(!points){
+            window.requestPositions();
+            return;
         }
+        
+        for (let i = 0; i<points.length; i++){
+            this.drawPoint(points[i], this._getColor(state));
+        }
+        
     }
     
-    setSize(x, y){
+    _setSize(x, y){
         this._canvasNode.width = x * this._scale;
         this._canvasNode.height = y * this._scale;
     }
@@ -63,12 +70,16 @@ class Canvas {
 }
 
 function drawNow(){
-    let canvasNode = document.getElementById("myCanvas");
     
-    let canvas = new Canvas(canvasNode, 10);
+    let canvas = window.canvas;
     canvas.clear();
     
     let snakeIDs = window.getSnakeIDs();
+    
+    if(snakeIDs.length ==0 ){
+       window.requestPositions();
+    }
+    
     for (let i = 0; i<snakeIDs.length; i++){
         canvas.drawSnake(snakeIDs[i]);
     }
@@ -83,20 +94,20 @@ function drawNow(){
     }
 }
 
-function setSize(x,y){
+function init(){
     let canvasNode = document.getElementById("myCanvas");
-    
-    let canvas = new Canvas(canvasNode, 10);
-    
-    canvas.setSize(x,y);
+    let size = window.getCanvasSize();
+    let scale = 10;
+    window.canvas = new Canvas(canvasNode, size, scale);
+    drawNow();
 }
 
 </script>
 
 </head>
-<body bgcolor="white">
+<body onload="init()" bgcolor="white">
 
-<canvas id="myCanvas" width="500" height="500" style="border:10px solid #d3d3d3;">
+<canvas id="myCanvas" width="50" height="50" style="border:10px solid #d3d3d3;">
 
 </body>
 </html>

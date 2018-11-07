@@ -40,6 +40,8 @@ void Snake::reset(){
     fBodyPoints = fInitialPoints;
     fSpeed = fInitialSpeed;
     fDirection = fInitialDirection;
+    fPreviousDirection = fInitialDirection;
+    
     fState = SnakeState::waiting;
     notifyListners(snake::SNAKE_MOVE_MESSAGE);
     notifyListners(snake::SNAKE_STATE_MESSAGE);
@@ -63,25 +65,32 @@ void Snake::move(int steps){
 }
 
 void Snake::moveOneStep(){
-    snake::Point nextPoint = [this](){
-        auto currentPoint = fBodyPoints.back();
-        return getNextPoint(currentPoint, fDirection);
-    }();
+    
+    auto nextPoint = getNextPoint(fBodyPoints.back(), fDirection);
     
     fBodyPoints.push_back(std::move(nextPoint));
+    fPreviousTail = *fBodyPoints.begin();
     fBodyPoints.erase(fBodyPoints.begin());
     
     fPreviousDirection = fDirection;
+}
+
+void Snake::grow(){
+    fBodyPoints.insert(fBodyPoints.begin(), fPreviousTail);
 }
 
 void Snake::addListner(Listner<Snake>* listener){
     fListners.push_back(listener);
 }
 
-void Snake::notifyListners(const std::string& message){
+void Snake::notifyListners(const std::string& message) const{
     for(const auto& listner: fListners){
         listner->notified(*this, message);
     }
+}
+
+double Snake::getSpeed() const{
+    return fSpeed;
 }
 
 void Snake::setSpeed(double speed){

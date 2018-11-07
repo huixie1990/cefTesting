@@ -8,13 +8,16 @@
 #include "include/wrapper/cef_message_router.h"
 
 #include "keyboard_handler.hpp"
+#include "game_engine.hpp"
 #include <vector>
 
 
 class SnakeClient : public CefClient, public CefDisplayHandler, public CefLifeSpanHandler, public CefRequestHandler  {
     
 public:
-    SnakeClient(CefRefPtr<snake::KeyboardHandler> keyboardHandler):fKeyboardHandler(keyboardHandler){};
+    SnakeClient(CefRefPtr<snake::KeyboardHandler> keyboardHandler,
+                snake::GameEngine* engine)
+        :fKeyboardHandler(keyboardHandler), fEngine(engine){};
     SnakeClient(const SnakeClient&) = delete;
     SnakeClient(SnakeClient&&) = default;
     SnakeClient& operator=(const SnakeClient&) = delete;
@@ -26,10 +29,11 @@ public:
     CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override { return this; }
     CefRefPtr<CefRequestHandler> GetRequestHandler() override { return this; }
     CefRefPtr<CefKeyboardHandler> GetKeyboardHandler() override { return fKeyboardHandler; }
-//    bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
-//                                  CefProcessId source_process,
-//                                  CefRefPtr<CefProcessMessage> message) override;
-//
+    
+    bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
+                                  CefProcessId source_process,
+                                  CefRefPtr<CefProcessMessage> message) override;
+
     // CefDisplayHandler methods:
     void OnTitleChange(CefRefPtr<CefBrowser> browser,
                        const CefString& title) override;
@@ -58,6 +62,7 @@ public:
 private:
     CefRefPtr<snake::KeyboardHandler> fKeyboardHandler;
     std::vector<CefRefPtr<CefBrowser>> fBrowsers;
+    snake::GameEngine* __unused fEngine;
     
     IMPLEMENT_REFCOUNTING(SnakeClient);
 };

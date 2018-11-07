@@ -41,9 +41,7 @@ bool FoodGenerator::shouldGenerate(){
 }
 
 void FoodGenerator::generate(){
-    for(decltype(fSize) i=0; i < fSize - fFoods.size(); i++){
-        generateOneFood();
-    }
+    generateFood(fSize - fFoods.size());
 }
 
 const std::vector<Food>& FoodGenerator::getFoods() const{
@@ -67,15 +65,19 @@ void FoodGenerator::notifyListners(const std::string& message){
 }
 
 
-void FoodGenerator::generateOneFood(){
+void FoodGenerator::generateFood(int num){
     
     auto freePoints = fGameEngine->getFreePoints();
+    std::random_shuffle(freePoints.begin(), freePoints.end());
+//    std::random_device rd;  //Will be used to obtain a seed for the random number engine
+//    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+//    std::uniform_int_distribution<> disX(0, freePoints.size()+1);
+//
+    //fFoods.emplace_back(freePoints[disX(gen)]);
     
-    std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    std::uniform_int_distribution<> disX(0, freePoints.size()+1);
-    
-    fFoods.emplace_back(freePoints[disX(gen)]);
+    for (int i =0; i< num;i++){
+        fFoods.emplace_back(freePoints[i]);
+    }
     
     notifyListners(FOOD_CREATE_MESSAGE);
 }

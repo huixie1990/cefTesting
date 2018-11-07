@@ -9,6 +9,7 @@
 
 #include <chrono>
 #include <vector>
+#include <map>
 #include <functional>
 
 #include "snake.hpp"
@@ -23,6 +24,11 @@ namespace snake {
         GameState source;
         GameState destination;
         std::function<bool()> condition;
+    };
+    
+    struct StateAction{
+        std::function<void()> entry;
+        std::function<void()> during;
     };
     
     class GameEngine{
@@ -41,7 +47,7 @@ namespace snake {
         
         std::vector<Point> getFreePoints() const;
         
-        // getters
+        // getters setters
         std::vector<Snake>& getSnakes();
         const std::vector<Snake>& getSnakes() const;
         FoodGenerator& getFoodGenerator();
@@ -57,14 +63,17 @@ namespace snake {
         GameState fGameState  = GameState::idle;
         GameState fPreviousState  = GameState::idle;
         std::vector<Transition> fTransitions;
+        std::map<GameState, StateAction> fStateActions;
         
         void step();
         void stepSnakes();
-        void entry(GameState);
-        void during(GameState);
+        void checkSnakeEatsFood();
+        
+
         bool snakeHeadHitsObject(const Snake&);
         
         std::vector<Transition> createTransitions();
+        std::map<GameState, StateAction> createStates();
     };
     
 

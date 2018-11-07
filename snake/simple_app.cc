@@ -36,7 +36,7 @@ void SimpleApp::OnContextInitialized() {
     CefRefPtr<snake::KeyboardHandler> handler = new snake::KeyboardHandler(&fGameEngine);
     // SimpleHandler implements browser-level callbacks.
     // fClient is a CEF smart pointer
-    fClient = new SnakeClient(handler);
+    fClient = new SnakeClient(handler, &fGameEngine);
     
     // Specify CEF browser settings here.
     CefBrowserSettings browser_settings;

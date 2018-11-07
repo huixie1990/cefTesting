@@ -55,6 +55,6 @@ namespace snake {
         
         
         void notifyListners(const std::string&);
-        void generateOneFood();
+        void generateFood(int);
     };
 }

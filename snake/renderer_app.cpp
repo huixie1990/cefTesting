@@ -29,11 +29,15 @@ void RendererApp::OnContextCreated(CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefV8Handler> idHandler = new snake::JsSnakeIDHandler(this);
     CefRefPtr<CefV8Handler> stateHandler = new snake::JsSnakeStateHandler(this);
     CefRefPtr<CefV8Handler> foodHandler = new snake::JsFoodHandler(this);
+    CefRefPtr<CefV8Handler> canvasHandler = new snake::JsCanvasHandler();
+    CefRefPtr<CefV8Handler> requestHandler = new snake::JsRequestHandler(browser);
     
     addJSFunction(positionHandler, snake::GET_POS_FUNC_NAME);
     addJSFunction(idHandler, snake::GET_ID_FUNC_NAME);
     addJSFunction(stateHandler, snake::GET_STATE_FUNC_NAME);
     addJSFunction(foodHandler, snake::GET_FOOD_FUNC_NAME);
+    addJSFunction(canvasHandler, snake::GET_CANVAS_SIZE_FUNC_NAME);
+    addJSFunction(requestHandler, snake::REQUEST_POS_FUNC_NAME);
 }
 
 bool RendererApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,

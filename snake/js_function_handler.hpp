@@ -15,6 +15,8 @@ namespace snake {
     extern const std::string GET_ID_FUNC_NAME;
     extern const std::string GET_STATE_FUNC_NAME;
     extern const std::string GET_FOOD_FUNC_NAME;
+    extern const std::string GET_CANVAS_SIZE_FUNC_NAME;
+    extern const std::string REQUEST_POS_FUNC_NAME;
     
     class JsSnakeLocationHandler : public CefV8Handler {
     public:
@@ -81,5 +83,37 @@ namespace snake {
         CefRefPtr<RendererApp> fApp;
         // Provide the reference counting implementation for this class.
         IMPLEMENT_REFCOUNTING(JsFoodHandler);
+    };
+    
+    
+    class JsCanvasHandler : public CefV8Handler {
+    public:
+        JsCanvasHandler() = default;
+        ~JsCanvasHandler() = default;
+        
+        bool Execute(const CefString& name,
+                     CefRefPtr<CefV8Value> object,
+                     const CefV8ValueList& arguments,
+                     CefRefPtr<CefV8Value>& retval,
+                     CefString& exception) override;
+    private:
+        // Provide the reference counting implementation for this class.
+        IMPLEMENT_REFCOUNTING(JsCanvasHandler);
+    };
+    
+    class JsRequestHandler : public CefV8Handler {
+    public:
+        JsRequestHandler(CefRefPtr<CefBrowser> browser):fBrowser(browser){};
+        ~JsRequestHandler() = default;
+        
+        bool Execute(const CefString& name,
+                     CefRefPtr<CefV8Value> object,
+                     const CefV8ValueList& arguments,
+                     CefRefPtr<CefV8Value>& retval,
+                     CefString& exception) override;
+    private:
+        CefRefPtr<CefBrowser> fBrowser;
+        // Provide the reference counting implementation for this class.
+        IMPLEMENT_REFCOUNTING(JsRequestHandler);
     };
 }

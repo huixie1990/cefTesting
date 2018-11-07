@@ -14,6 +14,7 @@ namespace snake {
         int y;
         
         Point(int ix, int iy): x(ix), y(iy){};
+        
     };
     
     bool operator==(const snake::Point&, const snake::Point&);

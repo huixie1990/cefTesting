@@ -6,12 +6,14 @@
 //
 
 #include "js_function_handler.hpp"
-
+#include "constant.hpp"
 
 const std::string snake::GET_POS_FUNC_NAME = "getPositionForSnake";
 const std::string snake::GET_ID_FUNC_NAME = "getSnakeIDs";
 const std::string snake::GET_STATE_FUNC_NAME = "getSnakeState";
 const std::string snake::GET_FOOD_FUNC_NAME = "getFoodPositions";
+const std::string snake::GET_CANVAS_SIZE_FUNC_NAME = "getCanvasSize";
+const std::string snake::REQUEST_POS_FUNC_NAME = "requestPositions";
 
 bool snake::JsSnakeLocationHandler::Execute(const CefString& name,
                      CefRefPtr<CefV8Value> object,
@@ -93,3 +95,42 @@ bool snake::JsFoodHandler::Execute(const CefString& name,
     return false;
 }
 
+
+
+bool snake::JsCanvasHandler::Execute(const CefString& name,
+             CefRefPtr<CefV8Value> object,
+             const CefV8ValueList& arguments,
+             CefRefPtr<CefV8Value>& retval,
+             CefString& exception){
+
+    if (name == GET_CANVAS_SIZE_FUNC_NAME){
+        auto size = CefV8Value::CreateObject(nullptr, nullptr);
+        size->SetValue("width",CefV8Value::CreateInt(CANVAS_WIDTH),
+                            V8_PROPERTY_ATTRIBUTE_READONLY);
+        size->SetValue("height",CefV8Value::CreateInt(CANVAS_HEIGHT),
+                            V8_PROPERTY_ATTRIBUTE_READONLY);
+        retval = size;
+        return true;
+
+    }
+    return false;
+}
+
+bool snake::JsRequestHandler::Execute(const CefString& name,
+                                     CefRefPtr<CefV8Value> object,
+                                     const CefV8ValueList& arguments,
+                                     CefRefPtr<CefV8Value>& retval,
+                                     CefString& exception){
+    
+    if (name == REQUEST_POS_FUNC_NAME){
+        
+        
+        CefRefPtr<CefProcessMessage> msg= CefProcessMessage::Create(REQUEST_POSITIONS_MESSAGE);
+        
+        // Send the process message to the render process.
+        // Use PID_BROWSER instead when sending a message to the browser process.
+        fBrowser->SendProcessMessage(PID_BROWSER, msg);
+        return true;
+    }
+    return false;
+}
