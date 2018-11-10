@@ -2,7 +2,6 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 #include <algorithm>
-#include <iostream>
 
 #include "snake_client.h"
 #include "constant.hpp"
@@ -32,7 +31,6 @@ bool SnakeClient::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
         }
         return true;
     }
-    std::cout << "\n\n\n\n";
     return false;
 }
 

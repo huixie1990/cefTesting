@@ -45,3 +45,14 @@ Direction snake::oposite(Direction dir){
             break;
     }
 }
+
+bool snake::arePointsContinuous(Point a, Point b){
+    if ((a.x == b.x) && (std::abs(a.y - b.y) == 1)){
+        return true;
+    }
+    
+    if ((a.y == b.y) && (std::abs(a.x - b.x) == 1)){
+        return true;
+    }
+    return false;
+}

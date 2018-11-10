@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "food.hpp"
-#include "game_engine.hpp"
 #include "constant.hpp"
 using namespace snake;
 

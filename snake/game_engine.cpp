@@ -14,31 +14,34 @@
 
 #include <thread>
 #include <memory>
-
 #include <algorithm>
 
 using namespace snake;
 
 GameEngine::GameEngine(std::chrono::duration<double> sampleTime):
         fSampleTime(sampleTime),
+        fSnakes(createSnakes()),
         fBoarder({CANVAS_WIDTH - 1, CANVAS_HEIGHT - 1}),
-        fFoodGenerator(FOOD_NUMBER){
-            
-        fSnakes.emplace_back(SnakeBuilder{}
-                          .tail({0,0})
-                          .length(3)
-                          .direction(Direction::right)
-                          .speed(5).build());
+        fFoodGenerator(fSnakes.size()),
+        fTransitions(createTransitions()),
+        fStateActions(createStates()){};
 
-        fSnakes.emplace_back(SnakeBuilder{}
-                          .tail({CANVAS_WIDTH - 1,CANVAS_WIDTH - 1})
-                          .length(6)
-                          .direction(Direction::down)
-                          .speed(1).build());
-            
-        fStateActions = createStates();
-        fTransitions = createTransitions();
-};
+std::vector<Snake> GameEngine::createSnakes(){
+    std::vector<Snake> snakes;
+    snakes.emplace_back(SnakeBuilder{}
+                         .tail({0,0})
+                         .length(3)
+                         .direction(Direction::right)
+                         .speed(5).build());
+    
+    snakes.emplace_back(SnakeBuilder{}
+                         .tail({CANVAS_WIDTH - 1,CANVAS_WIDTH - 1})
+                         .length(6)
+                         .direction(Direction::down)
+                         .speed(1).build());
+    return snakes;
+    
+}
 
 
 // getters

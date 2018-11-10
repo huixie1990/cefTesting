@@ -8,7 +8,7 @@
 #include "include/cef_application_mac.h"
 #include "include/wrapper/cef_helpers.h"
 
-#include "examples/shared/app_factory.h"
+
 #include "examples/shared/client_manager.h"
 
 #include "simple_app.h"
@@ -17,7 +17,6 @@
 #include <thread>
 #include <future>
 #include <chrono>
-#include <iostream>
 // Receives notifications from the application.
 @interface SnakeAppDelegate : NSObject<NSApplicationDelegate>
 - (void)createApplication:(id)object;

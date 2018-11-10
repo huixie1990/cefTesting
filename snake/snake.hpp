@@ -67,7 +67,7 @@ namespace snake {
         const Direction fInitialDirection;
         
         Direction fPreviousDirection;
-        Point fPreviousTail = {0,0};
+        Point fPreviousTail;
         
         const std::string fSID;
         double fCurrentMovingDistance = 0;

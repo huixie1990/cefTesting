@@ -4,7 +4,6 @@
 
 #include "include/cef_app.h"
 #include "renderer_app.hpp"
-#include <memory>
 
 // Entry point function for sub-processes.
 int main(int argc, char* argv[]) {

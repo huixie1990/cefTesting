@@ -5,7 +5,6 @@
 #pragma once
 
 #include "include/cef_client.h"
-#include "include/wrapper/cef_message_router.h"
 
 #include "keyboard_handler.hpp"
 #include "game_engine.hpp"

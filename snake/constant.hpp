@@ -11,7 +11,6 @@ namespace snake{
     extern const int CANVAS_WIDTH;
     extern const int CANVAS_HEIGHT;
     
-    extern const int FOOD_NUMBER;
     extern const double SPEED_UP_RATE;
     
     extern const std::string SNAKE_MOVE_MESSAGE;

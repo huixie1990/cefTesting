@@ -10,7 +10,6 @@ namespace snake{
     const int CANVAS_WIDTH = 50;
     const int CANVAS_HEIGHT = 50;
     
-    const int FOOD_NUMBER = 2;
     const double SPEED_UP_RATE = 1;
     
     const std::string SNAKE_MOVE_MESSAGE = "snake_move";

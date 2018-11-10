@@ -72,6 +72,7 @@ namespace snake {
 
         bool snakeHeadHitsObject(const Snake&);
         
+        std::vector<Snake> createSnakes();
         std::vector<Transition> createTransitions();
         std::map<GameState, StateAction> createStates();
     };

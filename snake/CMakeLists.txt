@@ -7,7 +7,7 @@
 #
 
 # cefsimple sources.
-set(CEFSIMPLE_SRCS
+set(SNAKE_SRCS
   simple_app.cc
   simple_app.h
   snake_client.cc
@@ -31,23 +31,23 @@ keyboard_handler.cpp
 utils.hpp
 utils.cpp
   )
-set(CEFSIMPLE_SRCS_LINUX
+set(SNAKE_SRCS_LINUX
   cefsimple_linux.cc
   simple_handler_linux.cc
   )
-set(CEFSIMPLE_SRCS_MACOSX
+set(SNAKE_SRCS_MACOSX
   cefsimple_mac.mm
   simple_handler_mac.mm
   )
-set(CEFSIMPLE_SRCS_WINDOWS
+set(SNAKE_SRCS_WINDOWS
   cefsimple.exe.manifest
   cefsimple.rc
   cefsimple_win.cc
   resource.h
   simple_handler_win.cc
   )
-APPEND_PLATFORM_SOURCES(CEFSIMPLE_SRCS)
-source_group(cef FILES ${CEFSIMPLE_SRCS})
+APPEND_PLATFORM_SOURCES(SNAKE_SRCS)
+source_group(cef FILES ${SNAKE_SRCS})
 
 set(CEFSIMPLE_RES_SRCS_WINDOWS
   res/cefsimple.ico
@@ -63,8 +63,8 @@ resources/snake.html
 list(APPEND ${WEB_RESOURCES})
 source_group(cef\\\\resources FILES ${WEB_RESOURCES})
 
-set(CEFSIMPLE_SRCS
-  ${CEFSIMPLE_SRCS}
+set(SNAKE_SRCS
+  ${SNAKE_SRCS}
   ${CEFSIMPLE_RES_SRCS}
   ${WEB_RESOURCES}
   )
@@ -86,7 +86,7 @@ set(CEFSIMPLE_HELPER_SRCS_MACOSX
   process_helper_mac.cc
   )
 APPEND_PLATFORM_SOURCES(CEFSIMPLE_HELPER_SRCS)
-source_group(cefsimple FILES ${CEFSIMPLE_HELPER_SRCS})
+source_group(cef FILES ${CEFSIMPLE_HELPER_SRCS})
 
 # cefsimple resources.
 set(CEFSIMPLE_RESOURCES_MAC_SRCS_MACOSX
@@ -109,7 +109,13 @@ set(CEFSIMPLE_RESOURCES_SRCS
 ${WEB_RESOURCES}
   )
 
-
+set(SNAKE_TEST_SRCS
+   unittest/main.cpp
+   unittest/TSnake.cpp
+    unittest/TSnakeBuilder.cpp
+)
+list(APPEND ${SNAKE_TEST_SRCS})
+source_group(unittest FILES ${SNAKE_TEST_SRCS})
 
 #
 # Shared configuration.
@@ -121,6 +127,7 @@ if(OS_MACOSX)
   set(CEF_HELPER_TARGET "snake_Helper")
   set(CEF_HELPER_OUTPUT_NAME "snake Helper")
 endif()
+set(TEST_TARGET "snake_unittest")
 
 # Logical target used to link the libcef library.
 ADD_LOGICAL_TARGET("libcef_lib" "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
@@ -135,7 +142,7 @@ SET_CEF_TARGET_OUT_DIR()
 
 if(OS_LINUX)
   # Executable target.
-  add_executable(${CEF_TARGET} ${CEFSIMPLE_SRCS})
+  add_executable(${CEF_TARGET} ${SNAKE_SRCS})
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
   add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
   target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS})
@@ -180,7 +187,7 @@ if(OS_MACOSX)
   FIX_MACOSX_HELPER_FRAMEWORK_RPATH(${CEF_HELPER_TARGET})
 
   # Main executable target.
-  add_executable(${CEF_TARGET} MACOSX_BUNDLE ${CEFSIMPLE_RESOURCES_SRCS} ${CEFSIMPLE_SRCS})
+  add_executable(${CEF_TARGET} MACOSX_BUNDLE ${CEFSIMPLE_RESOURCES_SRCS} ${SNAKE_SRCS})
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
   add_dependencies(${CEF_TARGET} libcef_dll_wrapper "${CEF_HELPER_TARGET}")
   target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS})
@@ -214,6 +221,36 @@ if(OS_MACOSX)
   # Remove these prefixes from input file paths.
   set(PREFIXES "mac/")
   COPY_MACOSX_RESOURCES("${CEFSIMPLE_RESOURCES_SRCS}" "${PREFIXES}" "${CEF_TARGET}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_APP}")
+
+  # Add a test target
+
+set(SNAKE_SRCS_FOR_TEST ${SNAKE_SRCS})
+list(REMOVE_ITEM SNAKE_SRCS_FOR_TEST "cefsimple_mac.mm")
+
+find_library(GTEST_LIB
+    NAMES googletest
+    PATHS "../build/snake/Frameworks"
+)
+
+message("\n\n\n\n\n\n\n\ndddddddd")
+message(${GTEST_LIB})
+
+
+add_executable(${TEST_TARGET} ${SNAKE_SRCS_FOR_TEST}  ${SNAKE_TEST_SRCS})
+SET_EXECUTABLE_TARGET_PROPERTIES(${TEST_TARGET})
+add_dependencies(${TEST_TARGET} libcef_dll_wrapper "${CEF_HELPER_TARGET}")
+target_link_libraries(${TEST_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS} ${GTEST_LIB} shared)
+add_dependencies(${TEST_TARGET} shared "${CEF_HELPER_TARGET}")
+
+target_include_directories(${TEST_TARGET} PUBLIC "${GTEST_LIB}/Versions/A")
+set_target_properties(${TEST_TARGET} PROPERTIES
+    OUTPUT_NAME ${TEST_TARGET})
+
+set_target_properties(${TEST_TARGET} PROPERTIES INSTALL_RPATH "@executable_path/..")
+set_target_properties(${TEST_TARGET} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
+
+
+
 endif()
 
 
@@ -223,7 +260,7 @@ endif()
 
 if(OS_WINDOWS)
   # Executable target.
-  add_executable(${CEF_TARGET} WIN32 ${CEFSIMPLE_SRCS})
+  add_executable(${CEF_TARGET} WIN32 ${SNAKE_SRCS})
   add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
   target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS})
@@ -241,3 +278,5 @@ if(OS_WINDOWS)
   COPY_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
   COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
 endif()
+
+
