@@ -10,7 +10,7 @@
 #include "constant.hpp"
 #include <cmath>
 #include <algorithm>
-#include <unordered_set>
+
 using namespace snake;
 
 Snake::Snake(const std::vector<Point>& bodyPoints,double speed,Direction direction):
@@ -23,16 +23,11 @@ Snake::Snake(const std::vector<Point>& bodyPoints,double speed,Direction directi
         fPreviousTail(*bodyPoints.begin()),
         fSID(generateSID()){
             
-            auto nonContiunousPoint = std::adjacent_find(bodyPoints.begin(), bodyPoints.end(),
-                                    [](Point p1, Point p2){
-                                        return !arePointsContinuous(p1, p2);
-                                    });
-            if(bodyPoints.end() != nonContiunousPoint){
+            if(!arePointsContinuous(bodyPoints)){
                 throw std::runtime_error("non continuous initial points");
             }
             
-            std::unordered_set<Point,PointHash> pointSet(bodyPoints.begin(), bodyPoints.end());
-            if(bodyPoints.size() != pointSet.size()){
+            if(hasDulicatedPoint(bodyPoints)){
                 throw std::runtime_error("duplicated initial points");
             }
         };
@@ -77,13 +72,15 @@ SnakeState Snake::getState() const{
     return fState;
 }
 
-// private
+
 void Snake::move(int steps){
     for(int i=0;i<steps;i++){
         moveOneStep();
     }
     notifyListners(snake::SNAKE_MOVE_MESSAGE);
 }
+
+// private
 
 void Snake::moveOneStep(){
     

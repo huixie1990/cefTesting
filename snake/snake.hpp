@@ -50,6 +50,7 @@ namespace snake {
         
         // operations
         void moveTimeStep(std::chrono::duration<double>);
+        void move(int steps);
         void accelerate();
         void grow();
         void reset();
@@ -62,19 +63,18 @@ namespace snake {
         double fSpeed;
         Direction fDirection;
         
-        const std::vector<Point> fInitialPoints;
-        const double fInitialSpeed;
-        const Direction fInitialDirection;
+        std::vector<Point> fInitialPoints;
+        double fInitialSpeed;
+        Direction fInitialDirection;
         
         Direction fPreviousDirection;
         Point fPreviousTail;
         
-        const std::string fSID;
+        std::string fSID;
         double fCurrentMovingDistance = 0;
         SnakeState fState = SnakeState::waiting;
         std::vector<Listner<Snake>*> fListners;
         
-        void move(int steps);
         void moveOneStep();
         bool isBodyValid(const std::vector<Point>&);
     };

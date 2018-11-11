@@ -113,6 +113,7 @@ set(SNAKE_TEST_SRCS
    unittest/main.cpp
    unittest/TSnake.cpp
     unittest/TSnakeBuilder.cpp
+unittest/TFood.cpp
 )
 list(APPEND ${SNAKE_TEST_SRCS})
 source_group(unittest FILES ${SNAKE_TEST_SRCS})

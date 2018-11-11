@@ -45,7 +45,9 @@ namespace snake{
     
     
     SnakeMovementHandler::SnakeMovementHandler(
-                                               const MovementKeys& keys, GameEngine* engine, int snakeIndex){
+                                               const MovementKeys& keys,
+                                               GameEngine* engine,
+                                               int snakeIndex){
         
         fGameEngine = engine;
         fSnakeIndex = snakeIndex;

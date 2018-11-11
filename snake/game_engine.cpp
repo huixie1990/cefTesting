@@ -217,8 +217,9 @@ std::map<GameState, StateAction> GameEngine::createStates(){
     
     auto runningDuring = [this](){
         stepSnakes();
-        fFoodGenerator.step([this](){return getFreePoints();});
         checkSnakeEatsFood();
+        fFoodGenerator.step([this](){return getFreePoints();});
+        
     };
 
     actions.emplace(GameState::idle, StateAction{

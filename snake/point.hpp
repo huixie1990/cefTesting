@@ -36,6 +36,8 @@ namespace snake {
     Direction oposite(Direction);
     
     bool arePointsContinuous(Point a, Point b);
+    bool arePointsContinuous(const std::vector<Point>& points);
+    bool hasDulicatedPoint(const std::vector<Point>& points);
 }
 
 

@@ -6,7 +6,7 @@
 //
 
 #include "point.hpp"
-
+#include <unordered_set>
 using namespace snake;
 bool snake::operator==(const Point& a, const Point& b){
     return a.x == b.x && a.y == b.y;
@@ -55,4 +55,18 @@ bool snake::arePointsContinuous(Point a, Point b){
         return true;
     }
     return false;
+}
+
+
+bool snake::arePointsContinuous(const std::vector<Point>& points){
+    return points.end() == std::adjacent_find(points.begin(), points.end(),
+                                                 [](Point p1, Point p2){
+                                                     return !arePointsContinuous(p1, p2);
+                                                 });
+}
+
+
+bool snake::hasDulicatedPoint(const std::vector<Point>& points){
+    std::unordered_set<Point,PointHash> pointSet(points.begin(), points.end());
+    return pointSet.size() < points.size();
 }

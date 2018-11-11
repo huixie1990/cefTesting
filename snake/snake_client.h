@@ -61,7 +61,7 @@ public:
 private:
     CefRefPtr<snake::KeyboardHandler> fKeyboardHandler;
     std::vector<CefRefPtr<CefBrowser>> fBrowsers;
-    snake::GameEngine* __unused fEngine;
+    snake::GameEngine* fEngine; // engine's life span longer than this class
     
     IMPLEMENT_REFCOUNTING(SnakeClient);
 };

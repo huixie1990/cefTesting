@@ -35,12 +35,12 @@ namespace snake {
     public:
         FoodGenerator(int size) : fSize(size){};
         
-        void step(std::function<std::vector<Point>()>);
+        void step(std::function<std::vector<Point>()> freePointsProvider);
         void reset();
         void foodEaten(const Food&);
         
         bool shouldGenerate();
-        void generate(std::function<std::vector<Point>()>&);
+        void generate(const std::function<std::vector<Point>()>&);
         
         void addListner(Listner<FoodGenerator>*);
         
@@ -54,6 +54,6 @@ namespace snake {
         
         
         void notifyListners(const std::string&);
-        void generateFood(size_t, std::function<std::vector<Point>()>&);
+        void generateFood(size_t, const std::function<std::vector<Point>()>&);
     };
 }

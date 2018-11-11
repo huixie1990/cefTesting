@@ -41,7 +41,7 @@ bool FoodGenerator::shouldGenerate(){
     return fFoods.size() < fSize;
 }
 
-void FoodGenerator::generate(std::function<std::vector<Point>()>& provider){
+void FoodGenerator::generate(const std::function<std::vector<Point>()>& provider){
     generateFood(fSize - fFoods.size(), provider);
 }
 
@@ -67,7 +67,7 @@ void FoodGenerator::notifyListners(const std::string& message){
 
 
 void FoodGenerator::generateFood(size_t num,
-                                std::function<std::vector<Point>()>& provider){
+                                const std::function<std::vector<Point>()>& provider){
     auto freePoints = provider();
     num = std::min(num, freePoints.size());
     std::random_shuffle(freePoints.begin(), freePoints.end());

@@ -8,15 +8,12 @@
 #include "../snake.hpp"
 #include "../point.hpp"
 #include "gtest/gtest.h"
-
+#include "gmock/gmock.h"
 namespace {
     
     // The fixture for testing class Foo.
     class SnakeBuilderTest : public ::testing::Test {
     protected:
-        // You can remove any or all of the following functions if its body
-        // is empty.
-        
         SnakeBuilderTest() = default;
         
         ~SnakeBuilderTest() override =default;
@@ -45,17 +42,17 @@ TEST_F(SnakeBuilderTest, BuilderTestTail) {
 }
 
 TEST_F(SnakeBuilderTest, BuilderTestLength) {
-    auto snake = fSnakeBuilder.tail({0,0}).length(6).build();
-    EXPECT_EQ(static_cast<int>(snake.getPosition().size()),6);
+    auto snake = fSnakeBuilder.length(6).build();
+    EXPECT_THAT(snake.getPosition(), ::testing::SizeIs(6));
 }
 
 TEST_F(SnakeBuilderTest, BuilderTestDirection) {
-    auto snake = fSnakeBuilder.tail({0,0}).length(1).direction(snake::Direction::down).build();
+    auto snake = fSnakeBuilder.direction(snake::Direction::down).build();
     EXPECT_EQ(snake.getDirection(),snake::Direction::down);
 }
 
 TEST_F(SnakeBuilderTest, BuilderTestSpeed) {
-    auto snake = fSnakeBuilder.tail({0,0}).length(1).speed(2.5).build();
+    auto snake = fSnakeBuilder.speed(2.5).build();
     EXPECT_EQ(snake.getSpeed(),2.5);
 }
 

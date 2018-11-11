@@ -42,10 +42,11 @@ namespace snake {
         
         // operations
         void runGameUntil(std::function<bool()> predicate);
+        std::vector<Point> getFreePoints() const;
+        
+        // possible async calls
         void sendDirectionToSnake(Direction dir, int snakeIdx);
         void gameStartRequested();
-        
-        std::vector<Point> getFreePoints() const;
         
         // getters setters
         std::vector<Snake>& getSnakes();
