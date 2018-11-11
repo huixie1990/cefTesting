@@ -21,6 +21,9 @@ bool snake::operator==(const Food& a, const Food& b){
 }
 
 void FoodGenerator::step(std::function<std::vector<Point>()> provider){
+    if(fState == FoodGenState::idle){
+        return;
+    }
     if(shouldGenerate()){
         generate(provider);
     }

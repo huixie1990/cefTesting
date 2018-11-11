@@ -16,6 +16,16 @@ namespace {
     auto fiveFreePointsProvider = [](){
         return Points{{1,1},{2,2},{3,3},{4,4},{5,5}};
     };
+    
+    Points foodsToPoints(const std::vector<snake::Food>& foods){
+        Points foodPoints;
+        std::transform(foods.begin(), foods.end(), std::back_inserter(foodPoints),
+                       [](const snake::Food& food){
+                           return food.getPosition();
+                       });
+        return foodPoints;
+    }
+    
     // The fixture for testing class Foo.
     class FoodGeneratorTest : public ::testing::Test {
     protected:
@@ -44,19 +54,37 @@ namespace {
         
         fGenerator.generate(fiveFreePointsProvider);
         
-        auto foods = fGenerator.getFoods();
-        Points foodPoints;
-        std::transform(foods.begin(), foods.end(), std::back_inserter(foodPoints),
-                       [](snake::Food& food){
-                           return food.getPosition();
-                       });
-        
-        for (auto& foodPoint: foodPoints){
+        for (auto& foodPoint: foodsToPoints(fGenerator.getFoods())){
             EXPECT_THAT(fiveFreePointsProvider(), Contains(foodPoint));
         }
         
     }
     
+    TEST_F(FoodGeneratorTest, FoodEatenTest){
+        fGenerator.generate(fiveFreePointsProvider);
+        
+        auto& foods = fGenerator.getFoods();
+        EXPECT_THAT(foods, SizeIs(3));
+        
+        auto& food1 = foods.back();
+        auto food1Pos = food1.getPosition();
+        fGenerator.foodEaten(food1);
+        
+        auto& newFoods = fGenerator.getFoods();
+        EXPECT_THAT(newFoods, SizeIs(2));
+        auto newFoodPoints = foodsToPoints(newFoods);
+        EXPECT_THAT(newFoodPoints, Not(Contains(food1Pos)));
+    }
+    
+    TEST_F(FoodGeneratorTest, StepTest){
+    
+        fGenerator.step(fiveFreePointsProvider);
+        EXPECT_THAT(fGenerator.getFoods(), SizeIs(0));
+        
+        fGenerator.setState(snake::FoodGenState::running);
+        fGenerator.step(fiveFreePointsProvider);
+        EXPECT_THAT(fGenerator.getFoods(), SizeIs(3));
+    }
     
     class GeneratorLengthTest :
         public ::testing::TestWithParam<std::pair<int,int>>
