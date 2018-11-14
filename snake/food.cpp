@@ -73,12 +73,14 @@ void FoodGenerator::generateFood(size_t num,
                                 const std::function<std::vector<Point>()>& provider){
     auto freePoints = provider();
     num = std::min(num, freePoints.size());
-    std::random_shuffle(freePoints.begin(), freePoints.end());
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(freePoints.begin(), freePoints.end(),g);
     
     std::transform(freePoints.begin(),
                    freePoints.begin() + num,
                    std::back_inserter(fFoods),
-                   [](const Point& point){
+                   [](const auto& point){
                        return Food(point);
                    });
     

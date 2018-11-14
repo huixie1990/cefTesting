@@ -60,7 +60,7 @@ bool snake::arePointsContinuous(Point a, Point b){
 
 bool snake::arePointsContinuous(const std::vector<Point>& points){
     return points.end() == std::adjacent_find(points.begin(), points.end(),
-                                                 [](Point p1, Point p2){
+                                                 [](auto p1, auto p2){
                                                      return !arePointsContinuous(p1, p2);
                                                  });
 }

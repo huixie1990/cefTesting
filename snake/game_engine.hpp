@@ -43,7 +43,7 @@ namespace snake {
         // operations
         void runGameUntil(std::function<bool()> predicate);
         std::vector<Point> getFreePoints() const;
-        
+        void step();
         // possible async calls
         void sendDirectionToSnake(Direction dir, int snakeIdx);
         void gameStartRequested();
@@ -55,7 +55,7 @@ namespace snake {
         const FoodGenerator& getFoodGenerator() const;
         const Boarder& getBoarder() const;
         void setState(GameState);
-        
+        GameState getState() const;        
     private:
         std::chrono::duration<double> fSampleTime;
         std::vector<Snake> fSnakes;
@@ -66,7 +66,7 @@ namespace snake {
         std::vector<Transition> fTransitions;
         std::map<GameState, StateAction> fStateActions;
         
-        void step();
+        
         void stepSnakes();
         void checkSnakeEatsFood();
         

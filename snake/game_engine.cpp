@@ -69,6 +69,10 @@ void GameEngine::setState(GameState state){
     fGameState = state;
 }
 
+GameState GameEngine:: getState() const{
+    return fGameState;
+}
+
 //operations:
 void GameEngine::runGameUntil(std::function<bool()> exitPredicate){
     while(!exitPredicate()){
@@ -116,7 +120,7 @@ std::vector<Point> GameEngine::getFreePoints() const{
 
     allPoints.erase(std::remove_if(allPoints.begin(),
                                    allPoints.end(),
-                                   [&occupied](Point& p){
+                                   [&occupied](auto& p){
                                        return std::find(occupied.cbegin(), occupied.cend(), p)
                                        != occupied.cend();
                                    }),
@@ -219,7 +223,6 @@ std::map<GameState, StateAction> GameEngine::createStates(){
         stepSnakes();
         checkSnakeEatsFood();
         fFoodGenerator.step([this](){return getFreePoints();});
-        
     };
 
     actions.emplace(GameState::idle, StateAction{

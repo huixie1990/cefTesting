@@ -20,6 +20,7 @@ Snake::Snake(const std::vector<Point>& bodyPoints,double speed,Direction directi
         fInitialPoints(bodyPoints),
         fInitialSpeed(speed),
         fInitialDirection(direction),
+        fPreviousDirection(direction),  
         fPreviousTail(*bodyPoints.begin()),
         fSID(generateSID()){
             
