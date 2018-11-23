@@ -25,7 +25,7 @@ namespace snake {
         {
             std::size_t h1 = std::hash<int>{}(point.x);
             std::size_t h2 = std::hash<int>{}(point.y);
-            return h1 ^ (h2 << 1); // or use boost::hash_combine (see Discussion)
+            return h1 ^ (h2 << 1);
         }
     };
     

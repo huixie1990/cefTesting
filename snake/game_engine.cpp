@@ -28,13 +28,13 @@ GameEngine::GameEngine(std::chrono::duration<double> sampleTime):
 
 std::vector<Snake> GameEngine::createSnakes(){
     std::vector<Snake> snakes;
-    snakes.emplace_back(SnakeBuilder{}
+    snakes.push_back(SnakeBuilder{}
                          .tail({0,0})
                          .length(3)
                          .direction(Direction::right)
                          .speed(5).build());
     
-    snakes.emplace_back(SnakeBuilder{}
+    snakes.push_back(SnakeBuilder{}
                          .tail({CANVAS_WIDTH - 1,CANVAS_WIDTH - 1})
                          .length(6)
                          .direction(Direction::down)
@@ -202,8 +202,8 @@ std::vector<Transition> GameEngine::createTransitions(){
     return transitions;
 }
 
-std::map<GameState, StateAction> GameEngine::createStates(){
-    std::map<GameState, StateAction> actions;
+std::unordered_map<GameState, StateAction> GameEngine::createStates(){
+    std::unordered_map<GameState, StateAction> actions;
     
     auto idleEntry = [this](){
         for(auto& snake: fSnakes){

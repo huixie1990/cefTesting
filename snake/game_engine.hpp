@@ -9,7 +9,7 @@
 
 #include <chrono>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <functional>
 
 #include "snake.hpp"
@@ -64,7 +64,7 @@ namespace snake {
         GameState fGameState  = GameState::idle;
         GameState fPreviousState  = GameState::idle;
         std::vector<Transition> fTransitions;
-        std::map<GameState, StateAction> fStateActions;
+        std::unordered_map<GameState, StateAction> fStateActions;
         
         
         void stepSnakes();
@@ -75,7 +75,7 @@ namespace snake {
         
         std::vector<Snake> createSnakes();
         std::vector<Transition> createTransitions();
-        std::map<GameState, StateAction> createStates();
+        std::unordered_map<GameState, StateAction> createStates();
     };
     
 
