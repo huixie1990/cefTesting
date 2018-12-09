@@ -8,10 +8,10 @@
 #pragma once
 #include <string>
 namespace snake{
-    extern const int CANVAS_WIDTH;
-    extern const int CANVAS_HEIGHT;
+    constexpr int CANVAS_WIDTH = 50;
+    constexpr int CANVAS_HEIGHT = 50;
     
-    extern const double SPEED_UP_RATE;
+    constexpr double SPEED_UP_RATE = 1.0;
     
     extern const std::string SNAKE_MOVE_MESSAGE;
     extern const std::string SNAKE_STATE_MESSAGE;

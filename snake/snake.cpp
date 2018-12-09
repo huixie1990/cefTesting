@@ -102,6 +102,11 @@ void Snake::addListner(Listner<Snake>* listener){
     fListners.push_back(listener);
 }
 
+void Snake::removeListner(Listner<Snake>* listener){
+    fListners.erase(std::remove(fListners.begin(),fListners.end(),listener));
+}
+
+
 void Snake::notifyListners(const std::string& message) const{
     for(const auto& listner: fListners){
         listner->notified(*this, message);

@@ -55,6 +55,7 @@ namespace snake {
         void grow();
         void reset();
         void addListner(Listner<Snake>*);
+        void removeListner(Listner<Snake>*);
         void notifyListners(const std::string&) const;
 
         

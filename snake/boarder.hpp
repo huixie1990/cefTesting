@@ -21,8 +21,8 @@ namespace snake {
         
         bool isPointInside(const Point& pt) const;
     private:
-        const Point fBottomLeft;
-        const Point fTopRight;
-        const std::vector<Point> fAllPoints;
+        Point fBottomLeft;
+        Point fTopRight;
+        std::vector<Point> fAllPoints;
     };
 }

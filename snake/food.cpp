@@ -60,6 +60,9 @@ void FoodGenerator::addListner(Listner<FoodGenerator>* listener){
     fListners.push_back(listener);
 }
 
+void FoodGenerator::removeListner(Listner<FoodGenerator>* listener){
+    fListners.erase(std::remove(fListners.begin(),fListners.end(),listener));
+}
 
 // private
 void FoodGenerator::notifyListners(const std::string& message){

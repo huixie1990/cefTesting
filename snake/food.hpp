@@ -43,6 +43,7 @@ namespace snake {
         void generate(const std::function<std::vector<Point>()>&);
         
         void addListner(Listner<FoodGenerator>*);
+        void removeListner(Listner<FoodGenerator>*);
         
         const std::vector<Food>& getFoods() const;
         void setState(FoodGenState);
