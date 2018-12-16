@@ -150,21 +150,14 @@
         [delegate performSelectorOnMainThread:@selector(createApplication:)
                                    withObject:nil
                                 waitUntilDone:NO];
+    
+        std::atomic<bool> exit = false;
         
-        // Create a std::promise object
-        std::promise<void> exitSignal;
-        
-        //Fetch std::future object associated with promise
-        std::future<void> futureObj = exitSignal.get_future();
-        
-        auto exitPredicate = [&futureObj](){
-            return futureObj.wait_for(std::chrono::milliseconds(1))
-                    != std::future_status::timeout;
-        };
-        
-        std::thread thread1 ([&](){
+        auto future = std::async(std::launch::async, [&exit, &app](){
             auto& engine = app->getGameEngine();
-            engine.runGameUntil(exitPredicate);
+            engine.runGameUntil([&exit]() -> std::atomic<bool>&{
+                return exit;
+            });
         });
         
         // Run the CEF message loop. This will block until CefQuitMessageLoop() is
@@ -174,9 +167,9 @@
         // Shut down CEF.
         CefShutdown();
 
-        exitSignal.set_value();
+        exit = true;
+        future.get();
         
-        thread1.join();
         // Release the delegate.
         [delegate release];
 

@@ -226,12 +226,12 @@ std::unordered_map<GameState, StateAction> GameEngine::createStates(){
     };
 
     actions.emplace(GameState::idle, StateAction{
-        idleEntry,
+        std::move(idleEntry),
         [](){}// during
     });
     
     actions.emplace(GameState::running, StateAction{
-        runningEntry,
+        std::move(runningEntry),
         runningDuring
     });
     

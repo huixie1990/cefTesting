@@ -51,8 +51,10 @@ namespace snake {
         // getters setters
         std::vector<Snake>& getSnakes();
         const std::vector<Snake>& getSnakes() const;
+        
         FoodGenerator& getFoodGenerator();
         const FoodGenerator& getFoodGenerator() const;
+        
         const Boarder& getBoarder() const;
         void setState(GameState);
         GameState getState() const;        

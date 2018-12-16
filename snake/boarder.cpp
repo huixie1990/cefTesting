@@ -43,6 +43,6 @@ int Boarder::height() const{
     return fTopRight.y - fTopRight.y + 1;
 }
 
-std::vector<Point> Boarder::allPoints() const{
+const std::vector<Point>& Boarder::allPoints() const{
     return fAllPoints;
 }

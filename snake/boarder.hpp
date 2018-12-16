@@ -17,7 +17,7 @@ namespace snake {
         Point getTopRight() const;
         int width() const;
         int height() const;
-        std::vector<Point> allPoints() const;
+        const std::vector<Point>& allPoints() const;
         
         bool isPointInside(const Point& pt) const;
     private:
